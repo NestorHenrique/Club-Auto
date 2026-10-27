@@ -104,7 +104,22 @@
         }
         #side-drawer.open { left: 0; }
         .drawer-item { padding: 14px; margin-bottom: 8px; border-radius: 8px; background: #0f172a; color: #f8fafc; font-size: 15px; font-weight: bold; cursor: pointer; }
-        .review-card { background: #0f172a; padding: 15px; border-radius: 8px; border: 1px solid #334155; margin-bottom: 12px; }
+
+        /* DESIGN TICKET / VOUCHER DE DESCONTO */
+        .ticket-box {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border: 2px dashed #10b981; border-radius: 16px; padding: 20px;
+            margin-top: 15px; position: relative; text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+        }
+        .ticket-header { font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+        .ticket-code { font-size: 26px; color: #10b981; font-weight: 800; letter-spacing: 2px; margin: 8px 0; font-family: monospace; }
+        .ticket-timer { font-size: 12px; color: #f59e0b; background: rgba(245, 158, 11, 0.1); padding: 4px 10px; border-radius: 12px; display: inline-block; margin-bottom: 10px; }
+
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
+        .stat-card { background: #0f172a; border: 1px solid #334155; padding: 12px; border-radius: 10px; text-align: center; }
+        .stat-card-val { font-size: 20px; font-weight: bold; color: #38bdf8; }
+        .stat-card-lbl { font-size: 11px; color: #94a3b8; margin-top: 4px; }
     </style>
 </head>
 <body>
@@ -113,6 +128,9 @@
     <div id="dev-bar">
         <span>🧪 AMBIENTE DE TESTES</span>
         <div>
+            <button type="button" onclick="simularPendenciaParaTeste()" style="background:#f59e0b; color:#000; border:none; padding:4px 8px; border-radius:4px; font-weight:bold; cursor:pointer; margin-right:8px;">
+                ⚡ Gerar Pendência
+            </button>
             <label style="display:inline; margin-right:5px; color:#fff;">Simular Como:</label>
             <select id="dev-role-selector" onchange="mudarAmbienteDev(this.value)">
                 <option value="motorista">🚗 Motorista (Nestor)</option>
@@ -249,13 +267,30 @@
     <div id="screen-indique" class="screen">
         <div class="header-dash">
             <button class="btn-link" style="width: auto; margin: 0; font-size: 20px;" onclick="voltarParaDashboard()">←</button>
-            <h3 style="color: #f8fafc;" id="indique-header-title">Indique</h3>
+            <h3 style="color: #f8fafc;" id="indique-header-title">Programa de Indicação</h3>
             <div style="width: 20px;"></div>
         </div>
         <div class="supplier-box" style="text-align: center;">
-            <h2 style="color:#10b981;">Ganhe 50% de Desconto!</h2>
-            <p id="indique-desc-text" style="font-size: 14px; color: #cbd5e1; margin: 15px 0;"></p>
-            <strong id="codigo-indicacao-display" style="font-size: 24px; color: #38bdf8;">INDIC-1234</strong>
+            <h2 style="color:#10b981;">Ganhe 50% na Mensalidade!</h2>
+            <p id="indique-desc-text" style="font-size: 13px; color: #cbd5e1; margin: 10px 0; line-height: 1.4;"></p>
+            
+            <div style="background: #0f172a; padding: 12px; border-radius: 8px; border: 1px dashed #38bdf8; margin: 15px 0;">
+                <span style="font-size: 11px; color: #94a3b8;">SEU CÓDIGO EXCLUSIVO:</span><br>
+                <strong id="codigo-indicacao-display" style="font-size: 22px; color: #38bdf8; letter-spacing: 1px;">INDIC-1234</strong>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-card-val">2</div>
+                    <div class="stat-card-lbl">Indicados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-val" style="color: #10b981;">1</div>
+                    <div class="stat-card-lbl">Ativos (30d)</div>
+                </div>
+            </div>
+
+            <button class="btn" style="background:#0284c7; margin-top: 15px;" onclick="copiarCodigoIndicacao()">Copiar Código</button>
         </div>
     </div>
 
@@ -272,7 +307,7 @@
         </div>
         <div class="supplier-box" id="ajuda-parceiro-content" style="display:none;">
             <h3>Ajuda da Loja Parceira</h3>
-            <p style="margin-top:10px; font-size:14px; color:#cbd5e1;">Como importar planilhas Excel e validar vouchers no balcão...</p>
+            <p style="margin-top:10px; font-size:14px; color:#cbd5e1;">Como importar planilhas Excel e validar vouchers...</p>
         </div>
     </div>
 
@@ -295,27 +330,53 @@
                     <span id="det-club-price" class="club-price" style="font-size: 22px;"></span>
                 </div>
                 <button type="button" id="det-btn-gerar" class="btn" style="background: #10b981; margin-top: 15px;">Gerar Cupom</button>
-                <div id="det-coupon-box" style="display:none; text-align:center; margin-top:15px; border:2px dashed #10b981; padding:10px;"></div>
+                <div id="det-coupon-box" style="display:none;"></div>
             </div>
-            <div id="det-reviews-container"></div>
         </div>
     </div>
 
-    <!-- TELAS DE AVALIAÇÃO OBRIGATÓRIA -->
+    <!-- TELA DE AVALIAÇÃO DO MOTORISTA -->
     <div id="screen-avaliacao-motorista" class="screen" style="justify-content: center;">
         <div class="card">
-            <h2>Avalie a Loja</h2>
-            <div class="input-group"><label>Nota</label><select id="mot-nota"><option value="5">5 ★ Excelente</option><option value="4">4 ★ Muito Bom</option></select></div>
-            <div class="input-group"><label>Comentário</label><textarea id="mot-comentario" rows="3"></textarea></div>
-            <button class="btn" style="background: #10b981;" onclick="enviarAvaliacaoMotorista()">Enviar</button>
+            <h2>Avaliar Loja Parceira</h2>
+            <p style="font-size: 13px; color: #94a3b8; margin-bottom: 15px; text-align: center;" id="mot-aval-sub">Avalie o atendimento recebido:</p>
+            <div class="input-group">
+                <label>Nota (1 a 5 Estrelas)</label>
+                <select id="mot-nota">
+                    <option value="5">5 ★ Excelente</option>
+                    <option value="4">4 ★ Muito Bom</option>
+                    <option value="3">3 ★ Regular</option>
+                    <option value="2">2 ★ Ruim</option>
+                    <option value="1">1 ★ Péssimo</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Comentário</label>
+                <textarea id="mot-comentario" rows="3" placeholder="Escreva como foi o atendimento na loja..."></textarea>
+            </div>
+            <button class="btn" style="background: #10b981;" onclick="enviarAvaliacaoMotorista()">Enviar Avaliação</button>
         </div>
     </div>
+
+    <!-- TELA DE AVALIAÇÃO DO PARCEIRO -->
     <div id="screen-avaliacao-parceiro" class="screen" style="justify-content: center;">
         <div class="card">
             <h2>Avaliar Motorista</h2>
-            <div class="input-group"><label>Nota</label><select id="parc-nota"><option value="5">5 ★ Educado</option></select></div>
-            <div class="input-group"><label>Observação</label><textarea id="parc-comentario" rows="3"></textarea></div>
-            <button class="btn" style="background: #10b981;" onclick="enviarAvaliacaoParceiro()">Enviar</button>
+            <p style="font-size: 13px; color: #94a3b8; margin-bottom: 15px; text-align: center;" id="parc-aval-sub">Avalie a cordialidade do motorista:</p>
+            <div class="input-group">
+                <label>Nota (1 a 5 Estrelas)</label>
+                <select id="parc-nota">
+                    <option value="5">5 ★ Excelente / Cordial</option>
+                    <option value="4">4 ★ Muito Bom</option>
+                    <option value="3">3 ★ Regular</option>
+                    <option value="1">1 ★ Pouco Cordial</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Observação</label>
+                <textarea id="parc-comentario" rows="3" placeholder="Escreva observações sobre o cliente/atendimento..."></textarea>
+            </div>
+            <button class="btn" style="background: #10b981;" onclick="enviarAvaliacaoParceiro()">Concluir e Enviar</button>
         </div>
     </div>
 
@@ -323,16 +384,16 @@
         function loadJSON(key, defaultVal) { try { const val = localStorage.getItem(key); return (val && val !== 'undefined') ? JSON.parse(val) : defaultVal; } catch(e) { return defaultVal; } }
         function saveJSON(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) {} }
 
-        const USER_DEV_MOTORISTA = { nome: "Nestor (Motorista Teste)", email: "nestor@teste.com", tipo: "motorista", telefone: "(86) 99999-0000", endereco: "Rua do Teste, 123", cidade: "Parnaíba - PI", foto: "" };
-        const USER_DEV_PARCEIRO = { nome: "Auto Center A", email: "autocenter@teste.com", tipo: "parceiro", telefone: "(86) 3322-0000", endereco: "Av. Principal, 100", cidade: "Parnaíba - PI", foto: "" };
+        const USER_DEV_MOTORISTA = { nome: "Nestor (Motorista Teste)", email: "nestor@teste.com", tipo: "motorista", telefone: "(86) 99999-0000", endereco: "Rua do Teste, 123", cidade: "Parnaíba - PI" };
+        const USER_DEV_PARCEIRO = { nome: "Auto Center A", email: "autocenter@teste.com", tipo: "parceiro", telefone: "(86) 3322-0000", endereco: "Av. Principal, 100", cidade: "Parnaíba - PI" };
 
         let currentUser = USER_DEV_MOTORISTA;
         let categoriaAtual = 'todas';
         let idPendenciaEmFoco = null;
 
         let catalogoCompleto = loadJSON('db_catalogo', [
-            { sku: "ALINH-01", categoria: "alinhamento", nome: "Alinhamento 3D", descricao: "Geometria completa.", parceiro: "Auto Center A", endereco: "Av. Principal, 100", imagem: "https://via.placeholder.com/300x200/1e293b/38bdf8?text=Alinhamento", precoTabela: 85.0, precoClube: 39.9, destaqueHoje: false, vagasRestantes: 0 },
-            { sku: "PNEU-14", categoria: "pneus", nome: "Pneu 175/65 R14", descricao: "Instalação grátis.", parceiro: "Ducha & Pneus C", endereco: "Rua do Comércio, 45", imagem: "https://via.placeholder.com/300x200/1e293b/38bdf8?text=Pneu+R14", precoTabela: 380.0, precoClube: 319.9, destaqueHoje: false, vagasRestantes: 0 }
+            { sku: "ALINH-01", categoria: "alinhamento", nome: "Alinhamento 3D", descricao: "Geometria completa.", parceiro: "Auto Center A", endereco: "Av. Principal, 100", imagem: "https://via.placeholder.com/300x200/1e293b/38bdf8?text=Alinhamento", precoTabela: 85.0, precoClube: 39.9 },
+            { sku: "PNEU-14", categoria: "pneus", nome: "Pneu 175/65 R14", descricao: "Instalação grátis.", parceiro: "Ducha & Pneus C", endereco: "Rua do Comércio, 45", imagem: "https://via.placeholder.com/300x200/1e293b/38bdf8?text=Pneu+R14", precoTabela: 380.0, precoClube: 319.9 }
         ]);
 
         function switchScreen(screenId) {
@@ -340,6 +401,26 @@
             const el = document.getElementById(screenId);
             if (el) el.classList.add('active');
             window.scrollTo(0,0);
+        }
+
+        function simularPendenciaParaTeste() {
+            let pends = loadJSON('db_pendencias', []);
+            const idGerado = 'pend-' + Date.now();
+            pends.push({
+                id: idGerado,
+                codigo: 'CLUB-TESTE',
+                motoristaEmail: USER_DEV_MOTORISTA.email,
+                motoristaNome: USER_DEV_MOTORISTA.nome,
+                parceiroNome: USER_DEV_PARCEIRO.nome,
+                servicoNome: 'Alinhamento 3D (Teste Rapido)',
+                precoTabela: 85,
+                precoClube: 39.9,
+                avaliadoPorMotorista: false,
+                avaliadoPorParceiro: false
+            });
+            saveJSON('db_pendencias', pends);
+            alert('Atendimento de teste gerado! Agora você pode clicar em AVALIAR na tela de qualquer perfil.');
+            voltarParaDashboard();
         }
 
         function mudarAmbienteDev(tipo) {
@@ -358,7 +439,6 @@
             if(drawer.classList.contains('open')) {
                 drawer.classList.remove('open'); overlay.style.display = 'none';
             } else {
-                document.getElementById('menu-indique-btn').innerHTML = currentUser.tipo === 'parceiro' ? '🤝 Indique um Parceiro' : '🎁 Indique um Amigo';
                 drawer.classList.add('open'); overlay.style.display = 'block';
             }
         }
@@ -368,7 +448,6 @@
             if(screenId === 'screen-profile') abrirPerfilConfig();
             else if(screenId === 'screen-minhas-avaliacoes') abrirMinhasAvaliacoes();
             else if(screenId === 'screen-indique') abrirIndique();
-            else if(screenId === 'screen-ajuda') abrirAjuda();
             else switchScreen(screenId);
         }
 
@@ -379,16 +458,87 @@
         function initDashboardMotorista(user) {
             switchScreen('screen-dashboard-motorista');
             let pends = loadJSON('db_pendencias', []);
-            document.getElementById('mot-pendencia-aviso').style.display = pends.some(p => p.motoristaEmail === user.email && !p.avaliadoPorMotorista) ? 'block' : 'none';
+            const pendente = pends.find(p => p.motoristaEmail === user.email && !p.avaliadoPorMotorista);
+            if(pendente) {
+                idPendenciaEmFoco = pendente.id;
+                document.getElementById('mot-pendencia-aviso').style.display = 'block';
+            } else {
+                document.getElementById('mot-pendencia-aviso').style.display = 'none';
+            }
             filtrarECatalogar();
         }
 
         function initDashboardParceiro(user) {
             switchScreen('screen-dashboard-parceiro');
             document.getElementById('supplier-products-container').innerHTML = catalogoCompleto.filter(p => p.parceiro === user.nome).map(p => `<div class="item-card"><div class="item-content"><span class="item-title">${p.nome}</span><span style="color:#10b981;font-weight:bold;">R$ ${p.precoClube.toFixed(2)}</span></div></div>`).join('');
+            
             let pends = loadJSON('db_pendencias', []).filter(p => p.parceiroNome === user.nome && !p.avaliadoPorParceiro);
             document.getElementById('parc-pendencia-box').style.display = pends.length ? 'block' : 'none';
-            document.getElementById('lista-atendimentos-pendentes').innerHTML = pends.map(a => `<div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>${a.motoristaNome}</span><button class="btn" style="width:70px; margin:0;" onclick="iniciarAvaliacaoParceiro('${a.id}')">Avaliar</button></div>`).join('');
+            
+            document.getElementById('lista-atendimentos-pendentes').innerHTML = pends.map(a => `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; background:#0f172a; padding:10px; border-radius:8px;">
+                    <div><strong style="color:#38bdf8;">${a.motoristaNome}</strong><br><span style="font-size:12px;">${a.servicoNome}</span></div>
+                    <button class="btn" style="width:90px; margin:0; padding:8px; background:#f59e0b; color:#000;" onclick="iniciarAvaliacaoParceiro('${a.id}')">Avaliar</button>
+                </div>
+            `).join('');
+        }
+
+        function abrirAvaliacaoMotorista() {
+            let pends = loadJSON('db_pendencias', []);
+            let p = pends.find(x => x.motoristaEmail === currentUser.email && !x.avaliadoPorMotorista);
+            if(p) {
+                idPendenciaEmFoco = p.id;
+                document.getElementById('mot-aval-sub').textContent = `Avalie o atendimento recebido em: ${p.parceiroNome}`;
+                switchScreen('screen-avaliacao-motorista');
+            } else {
+                alert('Nenhuma avaliação pendente encontrada.');
+            }
+        }
+
+        function iniciarAvaliacaoParceiro(idPendencia) {
+            idPendenciaEmFoco = idPendencia;
+            let pends = loadJSON('db_pendencias', []);
+            let p = pends.find(x => x.id === idPendencia);
+            if(p) {
+                document.getElementById('parc-aval-sub').textContent = `Avaliar o motorista: ${p.motoristaNome}`;
+            }
+            switchScreen('screen-avaliacao-parceiro');
+        }
+
+        function enviarAvaliacaoMotorista() {
+            const nota = document.getElementById('mot-nota').value;
+            const com = document.getElementById('mot-comentario').value.trim();
+            if (!com) return alert('Por favor, escreva um comentário sobre o atendimento.');
+            
+            let pends = loadJSON('db_pendencias', []);
+            let idx = pends.findIndex(p => p.id === idPendenciaEmFoco);
+            if (idx !== -1) {
+                pends[idx].avaliadoPorMotorista = true;
+                pends[idx].notaMotorista = nota;
+                pends[idx].comentarioMotorista = com;
+                saveJSON('db_pendencias', pends);
+                alert('Avaliação enviada com sucesso!');
+                document.getElementById('mot-comentario').value = '';
+                voltarParaDashboard();
+            }
+        }
+
+        function enviarAvaliacaoParceiro() {
+            const nota = document.getElementById('parc-nota').value;
+            const com = document.getElementById('parc-comentario').value.trim();
+            if (!com) return alert('Por favor, escreva uma observação sobre a cordialidade.');
+            
+            let pends = loadJSON('db_pendencias', []);
+            let idx = pends.findIndex(p => p.id === idPendenciaEmFoco);
+            if (idx !== -1) {
+                pends[idx].avaliadoPorParceiro = true;
+                pends[idx].notaParceiro = nota;
+                pends[idx].comentarioParceiro = com;
+                saveJSON('db_pendencias', pends);
+                alert('Avaliação do motorista registrada com sucesso!');
+                document.getElementById('parc-comentario').value = '';
+                voltarParaDashboard();
+            }
         }
 
         function filtrarECatalogar() {
@@ -435,34 +585,71 @@
             saveJSON('db_cupons_ativos', ativos);
 
             document.getElementById('det-coupon-box').style.display = 'block';
-            document.getElementById('det-coupon-box').innerHTML = `VOUCHER: <strong style="color:#10b981;">${couponCode}</strong>`;
+            document.getElementById('det-coupon-box').innerHTML = `<div class="ticket-box"><div class="ticket-code">${couponCode}</div></div>`;
         }
 
-        function finalizarServicoPeloParceiro() {
-            const codigo = document.getElementById('valida-codigo').value.trim().toUpperCase();
-            let ativos = loadJSON('db_cupons_ativos', []), idx = ativos.findIndex(c => c.codigo.toUpperCase() === codigo);
-            if (idx === -1) return alert('Cupom não encontrado.');
-            let c = ativos.splice(idx, 1)[0]; saveJSON('db_cupons_ativos', ativos);
-            let pends = loadJSON('db_pendencias', []);
-            pends.push({ id: 'pend-'+Date.now(), codigo: c.codigo, motoristaEmail: c.motoristaEmail, motoristaNome: c.motoristaNome, parceiroNome: currentUser.nome, servicoNome: c.servicoNome, precoTabela: c.precoTabela, precoClube: c.precoClube, avaliadoPorMotorista: false, avaliadoPorParceiro: false });
-            saveJSON('db_pendencias', pends);
-            alert('Serviço concluído!'); initDashboardParceiro(currentUser);
-        }
+        function abrirPerfilConfig() { switchScreen('screen-profile'); }
+       function abrirMinhasAvaliacoes() {
+    const container = document.getElementById('minhas-avaliacoes-list');
+    const title = document.getElementById('title-minhas-avaliacoes');
+    let pends = loadJSON('db_pendencias', []);
+    let html = '';
 
-        function abrirPerfilConfig() {
-            document.getElementById('user-profile-name').textContent = currentUser.nome;
-            document.getElementById('prof-telefone').value = currentUser.telefone;
-            document.getElementById('prof-endereco').value = currentUser.endereco;
-            document.getElementById('prof-cidade').value = currentUser.cidade;
-            switchScreen('screen-profile');
+    if (currentUser.tipo === 'parceiro') {
+        title.textContent = 'Avaliações dos Motoristas';
+        // Filtra as avaliações que a loja recebeu dos motoristas
+        let reviews = pends.filter(p => p.parceiroNome === currentUser.nome && p.avaliadoPorMotorista);
+        
+        if (reviews.length === 0) {
+            html = '<p style="color:#94a3b8; font-size:14px; text-align:center; margin-top:20px;">Nenhuma avaliação de motorista encontrada.</p>';
+        } else {
+            html = reviews.map(r => `
+                <div class="supplier-box" style="margin-bottom:12px; padding:15px;">
+                    <div style="color:#f59e0b; font-size:14px; margin-bottom:6px;">${'★'.repeat(Number(r.notaMotorista))}${'☆'.repeat(5 - Number(r.notaMotorista))}</div>
+                    <div style="font-size:14px; color:#cbd5e1; font-style:italic; margin-bottom:8px;">"${r.comentarioMotorista}"</div>
+                    <div style="font-size:12px; color:#38bdf8; text-align:right;">— ${r.motoristaNome} <span style="color:#94a3b8;">(${r.servicoNome})</span></div>
+                </div>
+            `).join('');
         }
+    } else {
+        title.textContent = 'Avaliações dos Parceiros';
+        // Filtra as avaliações que o motorista recebeu das lojas
+        let reviews = pends.filter(p => (p.motoristaEmail === currentUser.email || p.motoristaNome === currentUser.nome) && p.avaliadoPorParceiro);
+        
+        if (reviews.length === 0) {
+            html = '<p style="color:#94a3b8; font-size:14px; text-align:center; margin-top:20px;">Nenhuma avaliação de loja parceira encontrada.</p>';
+        } else {
+            html = reviews.map(r => `
+                <div class="supplier-box" style="margin-bottom:12px; padding:15px;">
+                    <div style="color:#f59e0b; font-size:14px; margin-bottom:6px;">${'★'.repeat(Number(r.notaParceiro))}${'☆'.repeat(5 - Number(r.notaParceiro))}</div>
+                    <div style="font-size:14px; color:#cbd5e1; font-style:italic; margin-bottom:8px;">"${r.comentarioParceiro}"</div>
+                    <div style="font-size:12px; color:#38bdf8; text-align:right;">— ${r.parceiroNome} <span style="color:#94a3b8;">(${r.servicoNome})</span></div>
+                </div>
+            `).join('');
+        }
+    }
 
-        function abrirMinhasAvaliacoes() { switchScreen('screen-minhas-avaliacoes'); }
+    container.innerHTML = html;
+    switchScreen('screen-minhas-avaliacoes');
+ }
         function abrirIndique() { switchScreen('screen-indique'); }
-        function abrirAjuda() { switchScreen('screen-ajuda'); }
         function selecionarCategoria(cat, el) { categoriaAtual = cat; filtrarECatalogar(); }
 
         window.onload = function() { initDashboardMotorista(currentUser); };
+        function selecionarCategoria(cat, el) {
+    categoriaAtual = cat;
+    
+    // Remove o destaque azul (active-chip) de todos os filtros
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active-chip'));
+    
+    // Se o elemento foi passado na chamada, adiciona o destaque azul nele
+    if (el) {
+        el.classList.add('active-chip');
+    }
+    
+    // Re-filtra o catálogo de acordo com a categoria selecionada
+    filtrarECatalogar();
+}
     </script>
 </body>
 </html>
