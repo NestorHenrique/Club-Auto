@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { ActiveCoupon } from '@/types/app';
+import { Ticket, Clock, CheckCircle2, XCircle, ArrowLeft } from 'lucide-react';
 
 interface MyCouponsScreenProps {
   coupons: ActiveCoupon[];
@@ -14,31 +15,43 @@ export function MyCouponsScreen({ coupons, onBack }: MyCouponsScreenProps) {
   const filteredCoupons = coupons.filter((c) => c.status === filter);
 
   return (
-    <div style={{ background: '#1e293b', borderRadius: '8px', padding: '20px', border: '1px solid #334155' }}>
+    <div style={{ background: '#1e293b', borderRadius: '12px', padding: '20px', border: '1px solid #334155' }}>
       <button
         onClick={onBack}
         style={{
-          background: 'transparent',
-          border: 'none',
+          background: '#1e293b',
+          border: '1px solid #334155',
           color: '#38bdf8',
+          borderRadius: '20px',
+          padding: '8px 16px',
+          fontSize: '13px',
+          fontWeight: '500',
           cursor: 'pointer',
-          marginBottom: '15px',
-          fontWeight: 'bold',
+          marginBottom: '20px',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '8px',
+          justifyContent: 'center',
+          transition: 'all 0.2s ease',
         }}
       >
-        ← Voltar ao Catálogo
+        <ArrowLeft size={16} color="#38bdf8" />
+        <span>Voltar ao Catálogo</span>
       </button>
 
-      <h2 style={{ color: '#f8fafc', marginBottom: '15px', fontSize: '18px' }}>🎟️ Meus Cupons</h2>
+      <h2 style={{ color: '#f8fafc', marginBottom: '15px', fontSize: '18px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <Ticket size={20} color="#38bdf8" />
+        <span>Meus Cupons</span>
+      </h2>
 
-      {/* CHIPS DE FILTRO DE STATUS */}
+      {/* CHIPS DE FILTRO */}
       <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
         <button
           onClick={() => setFilter('valid')}
           style={{
             flex: 1,
-            padding: '8px',
-            borderRadius: '6px',
+            padding: '10px',
+            borderRadius: '8px',
             border: 'none',
             fontSize: '12px',
             fontWeight: 'bold',
@@ -53,8 +66,8 @@ export function MyCouponsScreen({ coupons, onBack }: MyCouponsScreenProps) {
           onClick={() => setFilter('used')}
           style={{
             flex: 1,
-            padding: '8px',
-            borderRadius: '6px',
+            padding: '10px',
+            borderRadius: '8px',
             border: 'none',
             fontSize: '12px',
             fontWeight: 'bold',
@@ -69,8 +82,8 @@ export function MyCouponsScreen({ coupons, onBack }: MyCouponsScreenProps) {
           onClick={() => setFilter('expired')}
           style={{
             flex: 1,
-            padding: '8px',
-            borderRadius: '6px',
+            padding: '10px',
+            borderRadius: '8px',
             border: 'none',
             fontSize: '12px',
             fontWeight: 'bold',
@@ -106,7 +119,7 @@ export function MyCouponsScreen({ coupons, onBack }: MyCouponsScreenProps) {
                   R$ {c.discountPrice.toFixed(2)}
                 </span>
               </div>
-              <div style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '8px' }}>🏢 {c.partnerName}</div>
+              <div style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '8px' }}>{c.partnerName}</div>
 
               <div
                 style={{
@@ -121,9 +134,24 @@ export function MyCouponsScreen({ coupons, onBack }: MyCouponsScreenProps) {
                 <span style={{ fontSize: '13px', fontWeight: 'bold', color: '#38bdf8', letterSpacing: '1px' }}>
                   {c.code}
                 </span>
-                <span style={{ fontSize: '11px', color: '#94a3b8' }}>
-                  {c.status === 'valid' ? '⏳ Válido por 24h' : c.status === 'used' ? '✅ Utilizado' : '❌ Expirado'}
-                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: '#94a3b8' }}>
+                  {c.status === 'valid' ? (
+                    <>
+                      <Clock size={12} color="#f59e0b" />
+                      <span>Válido por 24h</span>
+                    </>
+                  ) : c.status === 'used' ? (
+                    <>
+                      <CheckCircle2 size={12} color="#10b981" />
+                      <span>Utilizado</span>
+                    </>
+                  ) : (
+                    <>
+                      <XCircle size={12} color="#ef4444" />
+                      <span>Expirado</span>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           ))}

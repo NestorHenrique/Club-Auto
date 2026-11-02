@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { PendingReview } from '@/types/app';
+import { Star } from 'lucide-react';
 
 interface ReviewModalProps {
   review: PendingReview | null;
@@ -50,7 +51,9 @@ export function ReviewModal({ review, onSubmitReview }: ReviewModalProps) {
         }}
       >
         <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-          <span style={{ fontSize: '36px', color: '#f59e0b' }}>⭐</span>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
+            <Star size={40} color="#f59e0b" fill="#f59e0b" />
+          </div>
           <h3 style={{ color: '#f8fafc', margin: '8px 0 4px', fontSize: '18px' }}>
             {isDriverViewing ? 'Serviço Finalizado! Como foi?' : 'Serviço Finalizado! Avalie o motorista'}
           </h3>
@@ -62,7 +65,7 @@ export function ReviewModal({ review, onSubmitReview }: ReviewModalProps) {
         </div>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {/* ESTRELAS AMARELAS */}
+          {/* ESTRELAS AMARELAS COM VETOR LUCIDE */}
           <div style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}>
             {[1, 2, 3, 4, 5].map((star) => (
               <button
@@ -72,13 +75,16 @@ export function ReviewModal({ review, onSubmitReview }: ReviewModalProps) {
                 style={{
                   background: 'transparent',
                   border: 'none',
-                  fontSize: '32px',
                   cursor: 'pointer',
-                  color: star <= rating ? '#f59e0b' : '#475569',
+                  padding: '4px',
                   transition: 'transform 0.1s ease',
                 }}
               >
-                ★
+                <Star
+                  size={32}
+                  color={star <= rating ? '#f59e0b' : '#475569'}
+                  fill={star <= rating ? '#f59e0b' : 'none'}
+                />
               </button>
             ))}
           </div>
@@ -95,7 +101,7 @@ export function ReviewModal({ review, onSubmitReview }: ReviewModalProps) {
               style={{
                 width: '100%',
                 padding: '10px',
-                borderRadius: '6px',
+                borderRadius: '8px',
                 background: '#0f172a',
                 border: '1px solid #334155',
                 color: '#f8fafc',
@@ -111,7 +117,7 @@ export function ReviewModal({ review, onSubmitReview }: ReviewModalProps) {
               background: '#f59e0b',
               color: '#0f172a',
               border: 'none',
-              borderRadius: '6px',
+              borderRadius: '8px',
               padding: '12px',
               fontWeight: 'bold',
               fontSize: '14px',

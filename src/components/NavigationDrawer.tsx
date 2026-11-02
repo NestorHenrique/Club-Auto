@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Tag, Ticket, User, Star, Gift, Headphones, X, Menu } from 'lucide-react';
 
 export type DriverScreenType = 'catalogo' | 'cupons' | 'perfil' | 'avaliacoes' | 'indique' | 'ajuda';
 
@@ -16,6 +17,15 @@ export function NavigationDrawer({ onSelectScreen }: NavigationDrawerProps) {
     setIsOpen(false);
   };
 
+  const menuItems = [
+    { id: 'catalogo', label: 'Catálogo de Ofertas', icon: Tag, color: '#10b981' },
+    { id: 'cupons', label: 'Meus Cupons', icon: Ticket, color: '#38bdf8' },
+    { id: 'perfil', label: 'Meu Perfil', icon: User, color: '#94a3b8' }, // Nome limpo sem emoji
+    { id: 'avaliacoes', label: 'Minhas Avaliações', icon: Star, color: '#f59e0b' },
+    { id: 'indique', label: 'Indicação & Bônus', icon: Gift, color: '#10b981' },
+    { id: 'ajuda', label: 'Ajuda & Suporte', icon: Headphones, color: '#38bdf8' },
+  ] as const;
+
   return (
     <>
       <button
@@ -24,13 +34,15 @@ export function NavigationDrawer({ onSelectScreen }: NavigationDrawerProps) {
           background: '#1e293b',
           border: '1px solid #334155',
           color: '#f8fafc',
-          borderRadius: '6px',
-          padding: '6px 12px',
-          fontSize: '18px',
+          borderRadius: '8px',
+          padding: '8px 12px',
           cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
-        ☰
+        <Menu size={20} />
       </button>
 
       {isOpen && (
@@ -42,7 +54,8 @@ export function NavigationDrawer({ onSelectScreen }: NavigationDrawerProps) {
             left: 0,
             width: '100vw',
             height: '100vh',
-            background: 'rgba(0,0,0,0.7)',
+            background: 'rgba(15, 23, 42, 0.8)',
+            backdropFilter: 'blur(4px)',
             zIndex: 250,
           }}
         >
@@ -55,56 +68,48 @@ export function NavigationDrawer({ onSelectScreen }: NavigationDrawerProps) {
               padding: '20px',
               display: 'flex',
               flexDirection: 'column',
-              boxShadow: '4px 0 15px rgba(0,0,0,0.5)',
+              boxShadow: '4px 0 25px rgba(0,0,0,0.5)',
+              borderRight: '1px solid #1e293b',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <h3 style={{ margin: 0, fontSize: '18px', color: '#10b981' }}>Clube Auto</h3>
+              <h3 style={{ margin: 0, fontSize: '18px', color: '#10b981', fontWeight: 'bold' }}>Clube Auto</h3>
               <button
                 onClick={() => setIsOpen(false)}
-                style={{ background: 'transparent', border: 'none', color: '#94a3b8', fontSize: '20px', cursor: 'pointer' }}
+                style={{ background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: '4px' }}
               >
-                ✕
+                <X size={20} />
               </button>
             </div>
 
-            <nav style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <button
-                onClick={() => handleNavigate('catalogo')}
-                style={{ textAlign: 'left', padding: '12px', borderRadius: '6px', background: '#1e293b', color: '#f8fafc', border: 'none', cursor: 'pointer' }}
-              >
-                🏷️ Catálogo de Ofertas
-              </button>
-              <button
-                onClick={() => handleNavigate('cupons')}
-                style={{ textAlign: 'left', padding: '12px', borderRadius: '6px', background: '#1e293b', color: '#f8fafc', border: 'none', cursor: 'pointer' }}
-              >
-                🎟️ Meus Cupons
-              </button>
-              <button
-                onClick={() => handleNavigate('perfil')}
-                style={{ textAlign: 'left', padding: '12px', borderRadius: '6px', background: '#1e293b', color: '#f8fafc', border: 'none', cursor: 'pointer' }}
-              >
-                👤 Meu Perfil
-              </button>
-              <button
-                onClick={() => handleNavigate('avaliacoes')}
-                style={{ textAlign: 'left', padding: '12px', borderRadius: '6px', background: '#1e293b', color: '#f8fafc', border: 'none', cursor: 'pointer' }}
-              >
-                ⭐ Minhas Avaliações
-              </button>
-              <button
-                onClick={() => handleNavigate('indique')}
-                style={{ textAlign: 'left', padding: '12px', borderRadius: '6px', background: '#1e293b', color: '#f8fafc', border: 'none', cursor: 'pointer' }}
-              >
-                🎁 Indicação & Bônus
-              </button>
-              <button
-                onClick={() => handleNavigate('ajuda')}
-                style={{ textAlign: 'left', padding: '12px', borderRadius: '6px', background: '#1e293b', color: '#f8fafc', border: 'none', cursor: 'pointer' }}
-              >
-                🎧 Ajuda & Suporte
-              </button>
+            <nav style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              {menuItems.map((item) => {
+                const IconComponent = item.icon;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => handleNavigate(item.id as DriverScreenType)}
+                    style={{
+                      textAlign: 'left',
+                      padding: '12px 14px',
+                      borderRadius: '8px',
+                      background: '#1e293b',
+                      color: '#f8fafc',
+                      border: '1px solid #334155',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      transition: 'all 0.2s ease',
+                    }}
+                  >
+                    <IconComponent size={18} color={item.color} />
+                    <span>{item.label}</span>
+                  </button>
+                );
+              })}
             </nav>
           </div>
         </div>

@@ -27,13 +27,14 @@ export interface PartnerOffer {
   partnerId: string;
   partnerName: string;
   title: string;
-  category: 'alinhamento' | 'pneus' | 'oleo';
+  category: 'alinhamento' | 'pneus' | 'oleo' | 'combustivel' | 'lavagem';
   originalPrice: number;
   discountPrice: number;
   discountPercentage: number;
   stockLimit: number;
   stockRemaining: number;
   active: boolean;
+  isDailyOffer?: boolean;
 }
 
 export interface ActiveCoupon {
@@ -42,6 +43,8 @@ export interface ActiveCoupon {
   offerId: string;
   offerTitle: string;
   partnerName: string;
+  partnerAddress?: string; // Adicionado para exibir o endereço real do estabelecimento
+  partnerPhone?: string;   // Adicionado para exibir o telefone real do estabelecimento
   originalPrice: number;
   discountPrice: number;
   generatedAt: string;

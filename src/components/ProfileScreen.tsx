@@ -1,21 +1,17 @@
 'use client';
 
-import { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent, FormEvent } from 'react';
 import { UserProfile } from '@/types/app';
+import { ArrowLeft, User, Upload } from 'lucide-react';
 
 interface ProfileScreenProps {
   profile: UserProfile;
-  onSave: (updated: UserProfile) => void;
+  onSave: (updatedProfile: UserProfile) => void;
   onBack: () => void;
 }
 
 export function ProfileScreen({ profile, onSave, onBack }: ProfileScreenProps) {
   const [formData, setFormData] = useState<UserProfile>(profile);
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
 
   const handleAvatarChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -28,31 +24,38 @@ export function ProfileScreen({ profile, onSave, onBack }: ProfileScreenProps) {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     onSave(formData);
     alert('Perfil atualizado com sucesso!');
   };
 
   return (
-    <div style={{ background: '#1e293b', borderRadius: '8px', padding: '20px', border: '1px solid #334155' }}>
+    <div style={{ background: '#1e293b', borderRadius: '12px', padding: '20px', border: '1px solid #334155' }}>
       <button
         onClick={onBack}
         style={{
-          background: 'transparent',
-          border: 'none',
+          background: '#1e293b',
+          border: '1px solid #334155',
           color: '#38bdf8',
+          borderRadius: '20px',
+          padding: '8px 16px',
+          fontSize: '13px',
+          fontWeight: '500',
           cursor: 'pointer',
-          marginBottom: '15px',
-          fontWeight: 'bold',
+          marginBottom: '20px',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
         }}
       >
-        ← Voltar ao Catálogo
+        <ArrowLeft size={16} color="#38bdf8" />
+        <span>Voltar ao Catálogo</span>
       </button>
 
-      <h2 style={{ color: '#f8fafc', marginBottom: '20px', fontSize: '18px' }}>👤 Meu Perfil (Motorista)</h2>
+      <h2 style={{ color: '#f8fafc', marginBottom: '15px', fontSize: '18px' }}>Meu Perfil</h2>
 
-      {/* Avatar e Upload */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
         <div
           style={{
@@ -70,9 +73,9 @@ export function ProfileScreen({ profile, onSave, onBack }: ProfileScreenProps) {
         >
           {formData.avatarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={formData.avatarUrl} alt="Foto de perfil" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <img src={formData.avatarUrl} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           ) : (
-            <span style={{ fontSize: '36px' }}>👤</span>
+            <User size={40} color="#94a3b8" />
           )}
         </div>
         <label
@@ -80,60 +83,121 @@ export function ProfileScreen({ profile, onSave, onBack }: ProfileScreenProps) {
             background: '#334155',
             color: '#f8fafc',
             padding: '6px 12px',
-            borderRadius: '6px',
+            borderRadius: '8px',
             fontSize: '12px',
             cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
           }}
         >
-          📷 Alterar Foto
+          <Upload size={14} />
+          <span>Alterar Foto</span>
           <input type="file" accept="image/*" onChange={handleAvatarChange} style={{ display: 'none' }} />
         </label>
       </div>
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         <div>
-          <label style={{ fontSize: '12px', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>Nome Completo</label>
+          <label style={{ fontSize: '12px', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
+            Nome Completo
+          </label>
           <input
             type="text"
-            name="name"
             value={formData.name}
-            onChange={handleChange}
-            style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', background: '#0f172a', border: '1px solid #334155', color: '#f8fafc' }}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            style={{
+              width: '100%',
+              padding: '10px',
+              borderRadius: '8px',
+              background: '#0f172a',
+              border: '1px solid #334155',
+              color: '#f8fafc',
+              fontSize: '13px',
+            }}
           />
         </div>
 
         <div>
-          <label style={{ fontSize: '12px', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>Telefone / WhatsApp</label>
+          <label style={{ fontSize: '12px', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
+            E-mail
+          </label>
           <input
-            type="text"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', background: '#0f172a', border: '1px solid #334155', color: '#f8fafc' }}
+            type="email"
+            value={formData.email}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            style={{
+              width: '100%',
+              padding: '10px',
+              borderRadius: '8px',
+              background: '#0f172a',
+              border: '1px solid #334155',
+              color: '#f8fafc',
+              fontSize: '13px',
+            }}
           />
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
           <div>
-            <label style={{ fontSize: '12px', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>Veículo</label>
+            <label style={{ fontSize: '12px', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
+              Telefone
+            </label>
             <input
               type="text"
-              name="vehicle"
-              value={formData.vehicle}
-              onChange={handleChange}
-              style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', background: '#0f172a', border: '1px solid #334155', color: '#f8fafc' }}
+              value={formData.phone}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              style={{
+                width: '100%',
+                padding: '10px',
+                borderRadius: '8px',
+                background: '#0f172a',
+                border: '1px solid #334155',
+                color: '#f8fafc',
+                fontSize: '13px',
+              }}
             />
           </div>
+
           <div>
-            <label style={{ fontSize: '12px', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>Placa</label>
+            <label style={{ fontSize: '12px', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
+              Placa do Veículo
+            </label>
             <input
               type="text"
-              name="plate"
               value={formData.plate}
-              onChange={handleChange}
-              style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', background: '#0f172a', border: '1px solid #334155', color: '#f8fafc' }}
+              onChange={(e) => setFormData({ ...formData, plate: e.target.value })}
+              style={{
+                width: '100%',
+                padding: '10px',
+                borderRadius: '8px',
+                background: '#0f172a',
+                border: '1px solid #334155',
+                color: '#f8fafc',
+                fontSize: '13px',
+              }}
             />
           </div>
+        </div>
+
+        <div>
+          <label style={{ fontSize: '12px', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
+            Veículo / Modelo
+          </label>
+          <input
+            type="text"
+            value={formData.vehicle}
+            onChange={(e) => setFormData({ ...formData, vehicle: e.target.value })}
+            style={{
+              width: '100%',
+              padding: '10px',
+              borderRadius: '8px',
+              background: '#0f172a',
+              border: '1px solid #334155',
+              color: '#f8fafc',
+              fontSize: '13px',
+            }}
+          />
         </div>
 
         <button
@@ -143,9 +207,10 @@ export function ProfileScreen({ profile, onSave, onBack }: ProfileScreenProps) {
             background: '#10b981',
             color: '#0f172a',
             border: 'none',
-            borderRadius: '6px',
-            padding: '10px',
+            borderRadius: '8px',
+            padding: '12px',
             fontWeight: 'bold',
+            fontSize: '14px',
             cursor: 'pointer',
           }}
         >
