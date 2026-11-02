@@ -1,4 +1,6 @@
-* {box-sizing: border-box;
+/* src/app/globals.css */
+* {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
@@ -8,52 +10,5 @@ body, html {
   min-height: 100vh;
   background-color: #0f172a;
   color: #f8fafc;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-}
-
-.screen {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-
-/* Remove o fundo branco e ajusta o estilo global dos Inputs e Selects */
-input, select, textarea {
-  background-color: #1e293b !important;
-  color: #f8fafc !important;
-  border: 1px solid #334155 !important;
-  border-radius: 6px !important;
-}
-
-/* Botão Voltar com estilo arredondado e borda elegante */
-.btn-link {
-  background-color: #1e293b !important;
-  color: #f8fafc !important;
-  border: 1px solid #334155 !important;
-  border-radius: 16px !important;
-  padding: 6px 14px !important;
-  font-size: 14px !important;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.btn-link:hover {
-  border-color: #38bdf8 !important;
-  color: #38bdf8 !important;
-  
-}
-/* Estilo escuro para o botão da Lupa */
-.btn {
-  background-color: #1e293b !important;
-  color: #f8fafc !important;
-  border: 1px solid #334155 !important;
-  border-radius: 8px !important;
-  cursor: pointer;
-}
-
-.btn:hover {
-  border-color: #38bdf8 !important;
+  font-family: system-ui, -apple-system, sans-serif;
 }

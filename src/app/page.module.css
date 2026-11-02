@@ -1,0 +1,23 @@
+
+.container {
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.headerDash {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.profileBadge {
+  background-color: #1e293b;
+  padding: 4px 8px;
+  border-radius: 12px;
+  color: #f59e0b;
+  font-size: 13px;
+  font-weight: bold;
+}
