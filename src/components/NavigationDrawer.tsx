@@ -2,114 +2,113 @@
 
 import { useState } from 'react';
 
+export type DriverScreenType = 'catalogo' | 'cupons' | 'perfil' | 'avaliacoes' | 'indique' | 'ajuda';
+
 interface NavigationDrawerProps {
-  onSelectScreen: (tela: 'catalogo' | 'parceiro' | 'perfil' | 'minhas-avaliacoes' | 'indique' | 'ajuda') => void;
+  onSelectScreen: (screen: DriverScreenType) => void;
 }
 
 export function NavigationDrawer({ onSelectScreen }: NavigationDrawerProps) {
-  const [menuAberto, setMenuAberto] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState(false);
 
-  const handleNavigate = (tela: 'catalogo' | 'parceiro' | 'perfil' | 'minhas-avaliacoes' | 'indique' | 'ajuda') => {
-    onSelectScreen(tela);
-    setMenuAberto(false);
+  const handleNavigate = (screen: DriverScreenType) => {
+    onSelectScreen(screen);
+    setIsOpen(false);
   };
 
   return (
     <>
-      {/* Botão de acionamento das três linhas */}
-      <div 
-        style={{ cursor: 'pointer', fontSize: '24px', padding: '5px' }} 
-        onClick={() => setMenuAberto(true)}
+      <button
+        onClick={() => setIsOpen(true)}
+        style={{
+          background: '#1e293b',
+          border: '1px solid #334155',
+          color: '#f8fafc',
+          borderRadius: '6px',
+          padding: '6px 12px',
+          fontSize: '18px',
+          cursor: 'pointer',
+        }}
       >
         ☰
-      </div>
+      </button>
 
-      {/* Fundo escuro (Overlay) */}
-      {menuAberto && (
-        <div 
+      {isOpen && (
+        <div
+          onClick={() => setIsOpen(false)}
           style={{
             position: 'fixed',
             top: 0,
             left: 0,
             width: '100vw',
             height: '100vh',
-            background: 'rgba(0,0,0,0.6)',
-            zIndex: 99
+            background: 'rgba(0,0,0,0.7)',
+            zIndex: 250,
           }}
-          onClick={() => setMenuAberto(false)}
-        />
-      )}
-
-      {/* Menu Gaveta Lateral */}
-      <div 
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: menuAberto ? 0 : '-280px',
-          width: '260px',
-          height: '100vh',
-          background: '#1e293b',
-          zIndex: 100,
-          transition: 'left 0.3s ease',
-          padding: '20px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '15px',
-          boxShadow: '4px 0 10px rgba(0,0,0,0.5)'
-        }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #334155', paddingBottom: '10px' }}>
-          <h3 style={{ color: '#10b981', margin: 0 }}>Menu Clube Auto</h3>
-          <button 
-            style={{ background: 'none', border: 'none', color: '#f8fafc', fontSize: '20px', cursor: 'pointer' }}
-            onClick={() => setMenuAberto(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: '280px',
+              height: '100%',
+              background: '#0f172a',
+              padding: '20px',
+              display: 'flex',
+              flexDirection: 'column',
+              boxShadow: '4px 0 15px rgba(0,0,0,0.5)',
+            }}
           >
-            ✕
-          </button>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+              <h3 style={{ margin: 0, fontSize: '18px', color: '#10b981' }}>Clube Auto</h3>
+              <button
+                onClick={() => setIsOpen(false)}
+                style={{ background: 'transparent', border: 'none', color: '#94a3b8', fontSize: '20px', cursor: 'pointer' }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <nav style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <button
+                onClick={() => handleNavigate('catalogo')}
+                style={{ textAlign: 'left', padding: '12px', borderRadius: '6px', background: '#1e293b', color: '#f8fafc', border: 'none', cursor: 'pointer' }}
+              >
+                🏷️ Catálogo de Ofertas
+              </button>
+              <button
+                onClick={() => handleNavigate('cupons')}
+                style={{ textAlign: 'left', padding: '12px', borderRadius: '6px', background: '#1e293b', color: '#f8fafc', border: 'none', cursor: 'pointer' }}
+              >
+                🎟️ Meus Cupons
+              </button>
+              <button
+                onClick={() => handleNavigate('perfil')}
+                style={{ textAlign: 'left', padding: '12px', borderRadius: '6px', background: '#1e293b', color: '#f8fafc', border: 'none', cursor: 'pointer' }}
+              >
+                👤 Meu Perfil
+              </button>
+              <button
+                onClick={() => handleNavigate('avaliacoes')}
+                style={{ textAlign: 'left', padding: '12px', borderRadius: '6px', background: '#1e293b', color: '#f8fafc', border: 'none', cursor: 'pointer' }}
+              >
+                ⭐ Minhas Avaliações
+              </button>
+              <button
+                onClick={() => handleNavigate('indique')}
+                style={{ textAlign: 'left', padding: '12px', borderRadius: '6px', background: '#1e293b', color: '#f8fafc', border: 'none', cursor: 'pointer' }}
+              >
+                🎁 Indicação & Bônus
+              </button>
+              <button
+                onClick={() => handleNavigate('ajuda')}
+                style={{ textAlign: 'left', padding: '12px', borderRadius: '6px', background: '#1e293b', color: '#f8fafc', border: 'none', cursor: 'pointer' }}
+              >
+                🎧 Ajuda & Suporte
+              </button>
+            </nav>
+          </div>
         </div>
-
-        <button 
-          style={{ background: 'transparent', color: '#f8fafc', textAlign: 'left', padding: '10px', borderRadius: '6px', border: 'none', cursor: 'pointer' }}
-          onClick={() => handleNavigate('catalogo')}
-        >
-          🏷️ Catálogo e Ofertas
-        </button>
-
-        <button 
-          style={{ background: 'transparent', color: '#f8fafc', textAlign: 'left', padding: '10px', borderRadius: '6px', border: 'none', cursor: 'pointer' }}
-          onClick={() => handleNavigate('perfil')}
-        >
-          👤 Meu Perfil
-        </button>
-
-        <button 
-          style={{ background: 'transparent', color: '#f8fafc', textAlign: 'left', padding: '10px', borderRadius: '6px', border: 'none', cursor: 'pointer' }}
-          onClick={() => handleNavigate('minhas-avaliacoes')}
-        >
-          ★ Minhas Avaliações
-        </button>
-
-        <button 
-          style={{ background: 'transparent', color: '#f8fafc', textAlign: 'left', padding: '10px', borderRadius: '6px', border: 'none', cursor: 'pointer' }}
-          onClick={() => handleNavigate('indique')}
-        >
-          🎁 Indique e Ganhe
-        </button>
-
-        <button 
-          style={{ background: 'transparent', color: '#f8fafc', textAlign: 'left', padding: '10px', borderRadius: '6px', border: 'none', cursor: 'pointer' }}
-          onClick={() => handleNavigate('ajuda')}
-        >
-          ❓ Central de Ajuda
-        </button>
-
-        <button 
-          style={{ background: '#334155', color: '#38bdf8', textAlign: 'left', padding: '10px', borderRadius: '6px', border: 'none', cursor: 'pointer', marginTop: 'auto' }}
-          onClick={() => handleNavigate('parceiro')}
-        >
-          🛠️ Área do Parceiro
-        </button>
-      </div>
+      )}
     </>
   );
 }
