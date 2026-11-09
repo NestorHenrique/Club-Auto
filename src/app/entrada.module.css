@@ -1,0 +1,93 @@
+.screen {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  padding: 48px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 28px;
+}
+
+.name {
+  font-family: var(--font-display);
+  font-size: 44px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.lane {
+  display: flex;
+  gap: 3px;
+  margin-top: 8px;
+}
+
+.lane span {
+  width: 18px;
+  height: 4px;
+  border-radius: 1px;
+  background: var(--lane);
+}
+
+.lead {
+  margin-top: 12px;
+  color: var(--ink-muted);
+}
+
+.options {
+  display: grid;
+  gap: 12px;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 16px;
+  text-align: left;
+  color: var(--ink);
+  background: var(--graphite);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-ticket);
+  cursor: pointer;
+  font: inherit;
+}
+
+.option:hover,
+.option:focus-visible {
+  border-color: var(--lane);
+  outline: none;
+}
+
+.optionIcon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-control);
+  background: var(--graphite-raised);
+  color: var(--lane);
+}
+
+.optionTitle {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.optionText {
+  color: var(--ink-muted);
+  font-size: 14px;
+}
+
+.note {
+  color: var(--ink-faint);
+  font-size: 12px;
+}

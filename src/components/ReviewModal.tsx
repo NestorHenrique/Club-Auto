@@ -3,11 +3,15 @@
 import { useState } from 'react';
 import { PendingReview } from '@/types/app';
 import { Star } from 'lucide-react';
+import ui from './ui.module.css';
+import styles from './ReviewModal.module.css';
 
 interface ReviewModalProps {
   review: PendingReview | null;
   onSubmitReview: (reviewId: string, rating: number, comment: string) => void;
 }
+
+const RATING_TEXT = ['', 'Ruim', 'Regular', 'Bom', 'Muito bom', 'Excelente'];
 
 export function ReviewModal({ review, onSubmitReview }: ReviewModalProps) {
   const [rating, setRating] = useState<number>(5);
@@ -23,108 +27,49 @@ export function ReviewModal({ review, onSubmitReview }: ReviewModalProps) {
   };
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
-        background: 'rgba(15, 23, 42, 0.92)',
-        backdropFilter: 'blur(4px)',
-        zIndex: 300,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '20px',
-      }}
-    >
-      <div
-        style={{
-          background: '#1e293b',
-          border: '1px solid #f59e0b',
-          borderRadius: '12px',
-          padding: '24px',
-          maxWidth: '400px',
-          width: '100%',
-          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)',
-        }}
-      >
-        <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
-            <Star size={40} color="#f59e0b" fill="#f59e0b" />
-          </div>
-          <h3 style={{ color: '#f8fafc', margin: '8px 0 4px', fontSize: '18px' }}>
-            {isDriverViewing ? 'Serviço Finalizado! Como foi?' : 'Serviço Finalizado! Avalie o motorista'}
-          </h3>
-          <p style={{ color: '#94a3b8', fontSize: '13px', margin: 0 }}>
-            {isDriverViewing
-              ? `Avalie sua experiência em ${review.partnerName}`
-              : `Avalie o atendimento ao motorista ${review.driverName}`}
-          </p>
-        </div>
+    <div className={styles.overlay} role="dialog" aria-modal="true" aria-label="Avaliação do serviço">
+      <div className={styles.card}>
+        <h3 className={styles.heading}>
+          {isDriverViewing ? 'Serviço finalizado. Como foi?' : 'Serviço finalizado. Avalie o motorista'}
+        </h3>
+        <p className={styles.sub}>
+          {isDriverViewing
+            ? `Conte como foi o atendimento em ${review.partnerName}.`
+            : `Avalie o atendimento ao motorista ${review.driverName}.`}
+        </p>
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {/* ESTRELAS AMARELAS COM VETOR LUCIDE */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}>
+        <form onSubmit={handleSubmit}>
+          <div className={styles.stars} role="radiogroup" aria-label="Nota">
             {[1, 2, 3, 4, 5].map((star) => (
               <button
                 key={star}
                 type="button"
+                role="radio"
+                aria-checked={star === rating}
+                aria-label={`${star} ${star === 1 ? 'estrela' : 'estrelas'}`}
+                className={`${styles.star} ${star <= rating ? styles.starOn : ''}`}
                 onClick={() => setRating(star)}
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: '4px',
-                  transition: 'transform 0.1s ease',
-                }}
               >
-                <Star
-                  size={32}
-                  color={star <= rating ? '#f59e0b' : '#475569'}
-                  fill={star <= rating ? '#f59e0b' : 'none'}
-                />
+                <Star size={38} fill={star <= rating ? 'currentColor' : 'none'} aria-hidden="true" />
               </button>
             ))}
           </div>
+          <p className={styles.ratingText}>{RATING_TEXT[rating]}</p>
 
-          <div>
-            <label style={{ fontSize: '12px', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
-              Comentário (opcional)
-            </label>
+          <div className={ui.field} style={{ marginBottom: 16 }}>
+            <label className={ui.label} htmlFor="rv-comment">Comentário (opcional)</label>
             <textarea
+              id="rv-comment"
+              className={ui.input}
               rows={3}
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              placeholder="Ex: Excelente atendimento, entrega no prazo!"
-              style={{
-                width: '100%',
-                padding: '10px',
-                borderRadius: '8px',
-                background: '#0f172a',
-                border: '1px solid #334155',
-                color: '#f8fafc',
-                fontSize: '13px',
-                resize: 'none',
-              }}
+              placeholder="Ex: Atendimento rápido e preço combinado."
             />
           </div>
 
-          <button
-            type="submit"
-            style={{
-              background: '#f59e0b',
-              color: '#0f172a',
-              border: 'none',
-              borderRadius: '8px',
-              padding: '12px',
-              fontWeight: 'bold',
-              fontSize: '14px',
-              cursor: 'pointer',
-            }}
-          >
-            Enviar Avaliação
+          <button type="submit" className={ui.btn} style={{ width: '100%' }}>
+            Enviar avaliação
           </button>
         </form>
       </div>

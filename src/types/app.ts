@@ -20,6 +20,10 @@ export interface PartnerProfile {
   workingHours: string;
   rating: number;
   logoUrl: string;
+  // Localização exata capturada pelo GPS (para oficinas sem endereço/loja física).
+  latitude?: number;
+  longitude?: number;
+  locationAccuracyM?: number;
 }
 
 export interface PartnerOffer {
@@ -42,9 +46,12 @@ export interface ActiveCoupon {
   code: string;
   offerId: string;
   offerTitle: string;
+  partnerId: string;
   partnerName: string;
   partnerAddress?: string; // Adicionado para exibir o endereço real do estabelecimento
   partnerPhone?: string;   // Adicionado para exibir o telefone real do estabelecimento
+  partnerLatitude?: number;
+  partnerLongitude?: number;
   originalPrice: number;
   discountPrice: number;
   generatedAt: string;

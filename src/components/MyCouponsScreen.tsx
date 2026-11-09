@@ -1,161 +1,102 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { ActiveCoupon } from '@/types/app';
-import { Ticket, Clock, CheckCircle2, XCircle, ArrowLeft } from 'lucide-react';
+import { brl } from '@/lib/format';
+import { BackButton } from '@/components/BackButton';
+import { Ticket, Clock, CheckCircle2, XCircle } from 'lucide-react';
+import styles from './MyCouponsScreen.module.css';
 
 interface MyCouponsScreenProps {
   coupons: ActiveCoupon[];
   onBack: () => void;
 }
 
+type CouponFilter = 'valid' | 'used' | 'expired';
+
+const TABS: { id: CouponFilter; label: string; empty: string }[] = [
+  { id: 'valid', label: 'Válidos', empty: 'Você não tem cupons válidos.' },
+  { id: 'used', label: 'Usados', empty: 'Nenhum cupom usado ainda.' },
+  { id: 'expired', label: 'Expirados', empty: 'Nenhum cupom expirou.' },
+];
+
+const STATUS_COLOR: Record<CouponFilter, string> = {
+  valid: 'var(--lane)',
+  used: 'var(--go)',
+  expired: 'var(--stop)',
+};
+
 export function MyCouponsScreen({ coupons, onBack }: MyCouponsScreenProps) {
-  const [filter, setFilter] = useState<'valid' | 'used' | 'expired'>('valid');
+  const [filter, setFilter] = useState<CouponFilter>('valid');
 
   const filteredCoupons = coupons.filter((c) => c.status === filter);
+  const emptyText = TABS.find((t) => t.id === filter)?.empty;
 
   return (
-    <div style={{ background: '#1e293b', borderRadius: '12px', padding: '20px', border: '1px solid #334155' }}>
-      <button
-        onClick={onBack}
-        style={{
-          background: '#1e293b',
-          border: '1px solid #334155',
-          color: '#38bdf8',
-          borderRadius: '20px',
-          padding: '8px 16px',
-          fontSize: '13px',
-          fontWeight: '500',
-          cursor: 'pointer',
-          marginBottom: '20px',
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '8px',
-          justifyContent: 'center',
-          transition: 'all 0.2s ease',
-        }}
-      >
-        <ArrowLeft size={16} color="#38bdf8" />
-        <span>Voltar ao Catálogo</span>
-      </button>
+    <div>
+      <BackButton onClick={onBack} />
 
-      <h2 style={{ color: '#f8fafc', marginBottom: '15px', fontSize: '18px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <Ticket size={20} color="#38bdf8" />
-        <span>Meus Cupons</span>
+      <h2 className={styles.title}>
+        <Ticket size={30} aria-hidden="true" />
+        Meus cupons
       </h2>
 
-      {/* CHIPS DE FILTRO */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
-        <button
-          onClick={() => setFilter('valid')}
-          style={{
-            flex: 1,
-            padding: '10px',
-            borderRadius: '8px',
-            border: 'none',
-            fontSize: '12px',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-            background: filter === 'valid' ? '#10b981' : '#0f172a',
-            color: filter === 'valid' ? '#0f172a' : '#94a3b8',
-          }}
-        >
-          Válidos
-        </button>
-        <button
-          onClick={() => setFilter('used')}
-          style={{
-            flex: 1,
-            padding: '10px',
-            borderRadius: '8px',
-            border: 'none',
-            fontSize: '12px',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-            background: filter === 'used' ? '#38bdf8' : '#0f172a',
-            color: filter === 'used' ? '#0f172a' : '#94a3b8',
-          }}
-        >
-          Finalizados
-        </button>
-        <button
-          onClick={() => setFilter('expired')}
-          style={{
-            flex: 1,
-            padding: '10px',
-            borderRadius: '8px',
-            border: 'none',
-            fontSize: '12px',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-            background: filter === 'expired' ? '#ef4444' : '#0f172a',
-            color: filter === 'expired' ? '#fff' : '#94a3b8',
-          }}
-        >
-          Expirados
-        </button>
+      <div className={styles.tabs} role="tablist" aria-label="Status dos cupons">
+        {TABS.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            role="tab"
+            aria-selected={filter === tab.id}
+            className={`${styles.tab} ${filter === tab.id ? styles.tabActive : ''}`}
+            onClick={() => setFilter(tab.id)}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
-      {/* LISTA DE CUPONS */}
       {filteredCoupons.length === 0 ? (
-        <p style={{ color: '#94a3b8', fontSize: '13px', textAlign: 'center', margin: '30px 0' }}>
-          Nenhum cupom nesta categoria.
-        </p>
+        <div className={styles.empty}>
+          <p className={styles.emptyTitle}>{emptyText}</p>
+          {filter === 'valid' && <p>Gere um cupom em Ofertas e ele aparece aqui.</p>}
+        </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <ul className={styles.list}>
           {filteredCoupons.map((c) => (
-            <div
+            <li
               key={c.id}
-              style={{
-                background: '#0f172a',
-                padding: '14px',
-                borderRadius: '8px',
-                border: '1px solid #334155',
-              }}
+              className={styles.coupon}
+              style={{ '--statusColor': STATUS_COLOR[c.status] } as CSSProperties}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                <span style={{ fontWeight: 'bold', color: '#f8fafc', fontSize: '14px' }}>{c.offerTitle}</span>
-                <span style={{ color: '#10b981', fontWeight: 'bold', fontSize: '14px' }}>
-                  R$ {c.discountPrice.toFixed(2)}
-                </span>
-              </div>
-              <div style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '8px' }}>{c.partnerName}</div>
+              <span className={styles.couponTitle}>{c.offerTitle}</span>
+              <span className={styles.couponPrice}>{brl(c.discountPrice)}</span>
+              <span className={styles.couponShop}>{c.partnerName}</span>
 
-              <div
-                style={{
-                  background: '#1e293b',
-                  padding: '8px 12px',
-                  borderRadius: '6px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}
-              >
-                <span style={{ fontSize: '13px', fontWeight: 'bold', color: '#38bdf8', letterSpacing: '1px' }}>
-                  {c.code}
-                </span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: '#94a3b8' }}>
+              <div className={styles.couponMeta}>
+                <span className={styles.couponCode}>{c.code}</span>
+                <span className={styles.status}>
                   {c.status === 'valid' ? (
                     <>
-                      <Clock size={12} color="#f59e0b" />
-                      <span>Válido por 24h</span>
+                      <Clock size={15} color="#ffc800" aria-hidden="true" />
+                      Válido até {new Date(c.expiresAt).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
                     </>
                   ) : c.status === 'used' ? (
                     <>
-                      <CheckCircle2 size={12} color="#10b981" />
-                      <span>Utilizado</span>
+                      <CheckCircle2 size={15} color="#43d17a" aria-hidden="true" />
+                      Usado
                     </>
                   ) : (
                     <>
-                      <XCircle size={12} color="#ef4444" />
-                      <span>Expirado</span>
+                      <XCircle size={15} color="#ff5a4f" aria-hidden="true" />
+                      Expirado
                     </>
                   )}
-                </div>
+                </span>
               </div>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   );

@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LayoutDashboard, PlusCircle, Building2, Star, Headphones, X, Menu } from 'lucide-react';
+import styles from './NavigationDrawer.module.css';
 
 export type PartnerTabType = 'dashboard' | 'cadastrar' | 'perfil' | 'avaliacoes' | 'suporte';
 
@@ -10,105 +11,76 @@ interface PartnerDrawerProps {
   partnerName: string;
 }
 
+const menuItems = [
+  { id: 'dashboard', label: 'Painel e validação', icon: LayoutDashboard },
+  { id: 'cadastrar', label: 'Cadastrar ofertas', icon: PlusCircle },
+  { id: 'perfil', label: 'Dados da oficina', icon: Building2 },
+  { id: 'avaliacoes', label: 'Avaliações', icon: Star },
+  { id: 'suporte', label: 'Suporte e ajuda', icon: Headphones },
+] as const;
+
 export function PartnerDrawer({ onSelectScreen, partnerName }: PartnerDrawerProps) {
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isOpen]);
 
   const handleNavigate = (screen: PartnerTabType) => {
     onSelectScreen(screen);
     setIsOpen(false);
   };
 
-  const menuItems = [
-    { id: 'dashboard', label: 'Painel & Validação', icon: LayoutDashboard, color: '#00E676' },
-    { id: 'cadastrar', label: 'Cadastrar Serviços & Peças', icon: PlusCircle, color: '#00D2FF' },
-    { id: 'perfil', label: 'Dados & Fotos da Oficina', icon: Building2, color: '#94A3B8' },
-    { id: 'avaliacoes', label: 'Avaliações Recebidas', icon: Star, color: '#FF9F0A' },
-    { id: 'suporte', label: 'Suporte & Ajuda', icon: Headphones, color: '#00D2FF' },
-  ] as const;
-
   return (
     <>
       <button
+        type="button"
+        className={styles.trigger}
         onClick={() => setIsOpen(true)}
-        style={{
-          background: '#121826',
-          border: '1px solid #1F293D',
-          color: '#F1F5F9',
-          borderRadius: '8px',
-          padding: '8px 12px',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
+        aria-label="Abrir menu"
+        aria-haspopup="dialog"
       >
-        <Menu size={20} />
+        <Menu size={22} aria-hidden="true" />
       </button>
 
       {isOpen && (
-        <div
-          onClick={() => setIsOpen(false)}
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
-            background: 'rgba(9, 13, 22, 0.85)',
-            backdropFilter: 'blur(4px)',
-            zIndex: 250,
-          }}
-        >
+        <div className={styles.overlay} onClick={() => setIsOpen(false)}>
           <div
+            className={styles.panel}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Menu do auto center"
             onClick={(e) => e.stopPropagation()}
-            style={{
-              width: '280px',
-              height: '100%',
-              background: '#121826',
-              padding: '20px',
-              display: 'flex',
-              flexDirection: 'column',
-              boxShadow: '4px 0 25px rgba(0,0,0,0.5)',
-              borderRight: '1px solid #1F293D',
-            }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <div>
-                <span style={{ fontSize: '11px', color: '#00E676', fontWeight: 'bold' }}>AUTO CENTER</span>
-                <h3 style={{ margin: 0, fontSize: '15px', color: '#F1F5F9' }}>{partnerName}</h3>
-              </div>
+            <div className={styles.head}>
+              <span className={styles.name}>{partnerName || 'Auto center'}</span>
               <button
+                type="button"
+                className={styles.close}
                 onClick={() => setIsOpen(false)}
-                style={{ background: 'transparent', border: 'none', color: '#94A3B8', cursor: 'pointer', padding: '4px' }}
+                aria-label="Fechar menu"
               >
-                <X size={20} />
+                <X size={22} aria-hidden="true" />
               </button>
             </div>
 
-            <nav style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <nav className={styles.nav}>
               {menuItems.map((item) => {
                 const IconComponent = item.icon;
                 return (
                   <button
                     key={item.id}
-                    onClick={() => handleNavigate(item.id as PartnerTabType)}
-                    style={{
-                      textAlign: 'left',
-                      padding: '12px 14px',
-                      borderRadius: '10px',
-                      background: '#090D16',
-                      color: '#F1F5F9',
-                      border: '1px solid #1F293D',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                    }}
+                    type="button"
+                    className={styles.item}
+                    onClick={() => handleNavigate(item.id)}
                   >
-                    <IconComponent size={18} color={item.color} />
-                    <span>{item.label}</span>
+                    <IconComponent size={20} aria-hidden="true" />
+                    {item.label}
                   </button>
                 );
               })}

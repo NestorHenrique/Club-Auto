@@ -2,7 +2,9 @@
 
 import { useState, ChangeEvent, FormEvent } from 'react';
 import { UserProfile } from '@/types/app';
-import { ArrowLeft, User, Upload } from 'lucide-react';
+import { BackButton } from '@/components/BackButton';
+import { User, Upload } from 'lucide-react';
+import ui from './ui.module.css';
 
 interface ProfileScreenProps {
   profile: UserProfile;
@@ -31,192 +33,90 @@ export function ProfileScreen({ profile, onSave, onBack }: ProfileScreenProps) {
   };
 
   return (
-    <div style={{ background: '#1e293b', borderRadius: '12px', padding: '20px', border: '1px solid #334155' }}>
-      <button
-        onClick={onBack}
-        style={{
-          background: '#1e293b',
-          border: '1px solid #334155',
-          color: '#38bdf8',
-          borderRadius: '20px',
-          padding: '8px 16px',
-          fontSize: '13px',
-          fontWeight: '500',
-          cursor: 'pointer',
-          marginBottom: '20px',
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '8px',
-        }}
-      >
-        <ArrowLeft size={16} color="#38bdf8" />
-        <span>Voltar ao Catálogo</span>
-      </button>
+    <div>
+      <BackButton onClick={onBack} />
+      <section className={ui.panel}>
+        <h2 className={ui.title}>Meu perfil</h2>
+        <p className={ui.lead}>Seus dados e o veículo que aparecem nos cupons.</p>
 
-      <h2 style={{ color: '#f8fafc', marginBottom: '15px', fontSize: '18px' }}>Meu Perfil</h2>
-
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
-        <div
-          style={{
-            width: '90px',
-            height: '90px',
-            borderRadius: '50%',
-            overflow: 'hidden',
-            background: '#334155',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: '10px',
-            border: '2px solid #10b981',
-          }}
-        >
-          {formData.avatarUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={formData.avatarUrl} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          ) : (
-            <User size={40} color="#94a3b8" />
-          )}
-        </div>
-        <label
-          style={{
-            background: '#334155',
-            color: '#f8fafc',
-            padding: '6px 12px',
-            borderRadius: '8px',
-            fontSize: '12px',
-            cursor: 'pointer',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '6px',
-          }}
-        >
-          <Upload size={14} />
-          <span>Alterar Foto</span>
-          <input type="file" accept="image/*" onChange={handleAvatarChange} style={{ display: 'none' }} />
-        </label>
-      </div>
-
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        <div>
-          <label style={{ fontSize: '12px', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
-            Nome Completo
+        <div className={ui.avatarBlock}>
+          <div className={ui.avatar}>
+            {formData.avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={formData.avatarUrl} alt="Sua foto" />
+            ) : (
+              <User size={42} aria-hidden="true" />
+            )}
+          </div>
+          <label className={ui.upload}>
+            <Upload size={18} aria-hidden="true" />
+            Trocar foto
+            <input type="file" accept="image/*" onChange={handleAvatarChange} />
           </label>
-          <input
-            type="text"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            style={{
-              width: '100%',
-              padding: '10px',
-              borderRadius: '8px',
-              background: '#0f172a',
-              border: '1px solid #334155',
-              color: '#f8fafc',
-              fontSize: '13px',
-            }}
-          />
         </div>
 
-        <div>
-          <label style={{ fontSize: '12px', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
-            E-mail
-          </label>
-          <input
-            type="email"
-            value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            style={{
-              width: '100%',
-              padding: '10px',
-              borderRadius: '8px',
-              background: '#0f172a',
-              border: '1px solid #334155',
-              color: '#f8fafc',
-              fontSize: '13px',
-            }}
-          />
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-          <div>
-            <label style={{ fontSize: '12px', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
-              Telefone
-            </label>
+        <form onSubmit={handleSubmit} className={ui.form}>
+          <div className={ui.field}>
+            <label className={ui.label} htmlFor="pf-name">Nome completo</label>
             <input
+              id="pf-name"
+              className={ui.input}
               type="text"
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              style={{
-                width: '100%',
-                padding: '10px',
-                borderRadius: '8px',
-                background: '#0f172a',
-                border: '1px solid #334155',
-                color: '#f8fafc',
-                fontSize: '13px',
-              }}
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             />
           </div>
 
-          <div>
-            <label style={{ fontSize: '12px', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
-              Placa do Veículo
-            </label>
+          <div className={ui.field}>
+            <label className={ui.label} htmlFor="pf-email">E-mail</label>
             <input
-              type="text"
-              value={formData.plate}
-              onChange={(e) => setFormData({ ...formData, plate: e.target.value })}
-              style={{
-                width: '100%',
-                padding: '10px',
-                borderRadius: '8px',
-                background: '#0f172a',
-                border: '1px solid #334155',
-                color: '#f8fafc',
-                fontSize: '13px',
-              }}
+              id="pf-email"
+              className={ui.input}
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             />
           </div>
-        </div>
 
-        <div>
-          <label style={{ fontSize: '12px', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
-            Veículo / Modelo
-          </label>
-          <input
-            type="text"
-            value={formData.vehicle}
-            onChange={(e) => setFormData({ ...formData, vehicle: e.target.value })}
-            style={{
-              width: '100%',
-              padding: '10px',
-              borderRadius: '8px',
-              background: '#0f172a',
-              border: '1px solid #334155',
-              color: '#f8fafc',
-              fontSize: '13px',
-            }}
-          />
-        </div>
+          <div className={ui.row}>
+            <div className={ui.field}>
+              <label className={ui.label} htmlFor="pf-phone">Telefone</label>
+              <input
+                id="pf-phone"
+                className={ui.input}
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              />
+            </div>
+            <div className={ui.field}>
+              <label className={ui.label} htmlFor="pf-plate">Placa</label>
+              <input
+                id="pf-plate"
+                className={ui.input}
+                type="text"
+                value={formData.plate}
+                onChange={(e) => setFormData({ ...formData, plate: e.target.value.toUpperCase() })}
+              />
+            </div>
+          </div>
 
-        <button
-          type="submit"
-          style={{
-            marginTop: '10px',
-            background: '#10b981',
-            color: '#0f172a',
-            border: 'none',
-            borderRadius: '8px',
-            padding: '12px',
-            fontWeight: 'bold',
-            fontSize: '14px',
-            cursor: 'pointer',
-          }}
-        >
-          Salvar Alterações
-        </button>
-      </form>
+          <div className={ui.field}>
+            <label className={ui.label} htmlFor="pf-vehicle">Veículo</label>
+            <input
+              id="pf-vehicle"
+              className={ui.input}
+              type="text"
+              value={formData.vehicle}
+              onChange={(e) => setFormData({ ...formData, vehicle: e.target.value })}
+            />
+          </div>
+
+          <button type="submit" className={ui.btn}>
+            Salvar alterações
+          </button>
+        </form>
+      </section>
     </div>
   );
 }

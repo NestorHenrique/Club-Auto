@@ -1,0 +1,256 @@
+/* Ticket de oferta: papel claro sobre o asfalto, picote no meio. */
+.ticket {
+  --notch: 11px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  color: var(--paper-ink);
+  border-radius: var(--radius-ticket);
+  box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.7);
+}
+
+.daily {
+  background: var(--lane);
+}
+
+.unavailable {
+  background: var(--graphite-raised);
+  color: var(--ink-muted);
+  box-shadow: none;
+}
+
+.top {
+  padding: 18px 18px 16px;
+}
+
+.flash {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  padding: 3px 8px 3px 6px;
+  background: var(--paper-ink);
+  color: var(--lane);
+  border-radius: var(--radius-chip);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.partner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--paper-muted);
+}
+
+.daily .partner {
+  color: rgba(23, 23, 26, 0.72);
+}
+
+.unavailable .partner {
+  color: var(--ink-faint);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 27px;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: 0.005em;
+  text-wrap: balance;
+}
+
+/* Picote: linha tracejada com os dois furos nas laterais */
+.perf {
+  position: relative;
+  height: 0;
+  border-top: 2px dashed rgba(23, 23, 26, 0.22);
+  margin: 0 calc(var(--notch) + 4px);
+}
+
+.unavailable .perf {
+  border-top-color: var(--line);
+}
+
+.perf::before,
+.perf::after {
+  content: '';
+  position: absolute;
+  top: calc(var(--notch) * -1 - 1px);
+  width: calc(var(--notch) * 2);
+  height: calc(var(--notch) * 2);
+  border-radius: 50%;
+  background: var(--asphalt);
+}
+
+.perf::before {
+  left: calc((var(--notch) + 4px) * -1 - var(--notch));
+}
+
+.perf::after {
+  right: calc((var(--notch) + 4px) * -1 - var(--notch));
+}
+
+.stub {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px 6px;
+}
+
+.was {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--paper-muted);
+  text-decoration: line-through;
+}
+
+.daily .was {
+  color: rgba(23, 23, 26, 0.65);
+}
+
+.now {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 46px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.005em;
+  font-variant-numeric: tabular-nums;
+}
+
+.save {
+  display: block;
+  margin-top: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f7a45;
+}
+
+.daily .save {
+  color: var(--paper-ink);
+}
+
+.unavailable .save {
+  color: var(--ink-faint);
+}
+
+.badge {
+  flex-shrink: 0;
+  padding: 6px 10px 4px;
+  background: var(--paper-ink);
+  color: var(--lane);
+  border-radius: 8px;
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1;
+  transform: rotate(-3deg);
+}
+
+.unavailable .badge {
+  background: var(--line);
+  color: var(--ink-muted);
+}
+
+.foot {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px 18px 18px;
+}
+
+.stock {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.stockLow {
+  color: #b4410a;
+}
+
+.daily .stockLow {
+  color: var(--paper-ink);
+}
+
+/* Marcador de estoque: um risco por cupom, como um mostrador de combustível */
+.gauge {
+  display: flex;
+  gap: 3px;
+  height: 10px;
+}
+
+.tick {
+  flex: 1;
+  max-width: 14px;
+  border-radius: 1.5px;
+  background: rgba(23, 23, 26, 0.16);
+}
+
+.tickOn {
+  background: var(--paper-ink);
+}
+
+.stockLow .tickOn {
+  background: #d94f0f;
+}
+
+.daily .stockLow .tickOn {
+  background: var(--paper-ink);
+}
+
+.unavailable .tickOn {
+  background: var(--line);
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 50px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: var(--paper-ink);
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: transform 0.12s ease, background-color 0.15s ease;
+}
+
+.daily .cta {
+  color: var(--lane);
+}
+
+.cta:hover:not(:disabled) {
+  background: #000;
+}
+
+.cta:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.cta:disabled {
+  background: var(--line);
+  color: var(--ink-faint);
+  cursor: not-allowed;
+}
+
+.cta:focus-visible {
+  outline-color: var(--paper-ink);
+  outline-offset: 3px;
+}

@@ -3,7 +3,11 @@
 import { useState, ChangeEvent } from 'react';
 import { PartnerOffer, PendingReview, PartnerProfile, CompletedReview } from '@/types/app';
 import { PartnerDrawer, PartnerTabType } from '@/components/PartnerDrawer';
-import { CheckCircle2, Star, Clock, ScanLine, Building2, Upload, PlusCircle, ArrowLeft, FileSpreadsheet, Edit3, Save, Flame, UserCheck } from 'lucide-react';
+import { BackButton } from '@/components/BackButton';
+import { brl } from '@/lib/format';
+import { Star, ScanLine, Building2, Upload, PlusCircle, FileSpreadsheet, Edit3, Save, Flame, UserCheck, Minus, Plus, MapPin } from 'lucide-react';
+import ui from './ui.module.css';
+import styles from './PartnerDashboard.module.css';
 
 interface PartnerDashboardProps {
   offers: PartnerOffer[];
@@ -15,8 +19,8 @@ interface PartnerDashboardProps {
   onUpdateStock: (offerId: string, newStock: number) => void;
   onUpdateOfferPrices: (offerId: string, originalPrice: number, discountPrice: number) => void;
   onAddOffer: (newOffer: Omit<PartnerOffer, 'id' | 'partnerId' | 'partnerName' | 'discountPercentage'>) => void;
-  onSwitchRole: () => void;
-  onCouponValidated?: (code: string) => void;
+  onSignOut: () => void;
+  onValidateCoupon: (code: string) => { success: boolean; message: string };
   onFinishService: (reviewId: string) => void;
 }
 
@@ -30,10 +34,10 @@ export function PartnerDashboard({
   onUpdateStock,
   onUpdateOfferPrices,
   onAddOffer,
-  onSwitchRole,
-  onCouponValidated,
+  onSignOut,
+  onValidateCoupon,
   onFinishService,
-}: PartnerDashboardProps) {
+}:PartnerDashboardProps) {
   const [couponCode, setCouponCode] = useState('');
   const [validationResult, setValidationResult] = useState<{ text: string; success: boolean } | null>(null);
   const [activePartnerTab, setActivePartnerTab] = useState<PartnerTabType>('dashboard');
@@ -51,6 +55,41 @@ export function PartnerDashboard({
   const [newStockLimit, setNewStockLimit] = useState('');
   const [newIsDailyOffer, setNewIsDailyOffer] = useState(false);
 
+  const [locating, setLocating] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
+
+  // Funciona no navegador do computador e do celular (exige HTTPS ou localhost).
+  const handleCaptureLocation = () => {
+    setLocationError(null);
+    if (typeof navigator === 'undefined' || !navigator.geolocation) {
+      setLocationError('Este dispositivo ou navegador não suporta localização por GPS.');
+      return;
+    }
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setPartnerForm((prev) => ({
+          ...prev,
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude,
+          locationAccuracyM: pos.coords.accuracy,
+        }));
+        setLocating(false);
+      },
+      (err) => {
+        setLocating(false);
+        setLocationError(
+          err.code === err.PERMISSION_DENIED
+            ? 'Permissão de localização negada. Libere o acesso à localização nas configurações do navegador e tente de novo.'
+            : err.code === err.TIMEOUT
+              ? 'Não foi possível obter a localização a tempo. Vá para um local aberto e tente novamente.'
+              : 'Localização indisponível no momento. Verifique se o GPS está ligado.'
+        );
+      },
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
+    );
+  };
+
   const partnerPendingReviews = pendingReviews.filter((r) => r.pendingFor === 'partner');
   const partnerReviewsReceived = completedReviews.filter((r) => r.type === 'driver_to_partner');
   const driverReviewsGiven = completedReviews.filter((r) => r.type === 'partner_to_driver');
@@ -62,22 +101,12 @@ export function PartnerDashboard({
 
   const handleValidate = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!couponCode.trim()) return;
+    const code = couponCode.trim().toUpperCase();
+    if (!code) return;
 
-    if (couponCode.toUpperCase().startsWith('CLUB-PAR-')) {
-      const code = couponCode.toUpperCase();
-      setValidationResult({
-        text: `Cupom ${code} validado com sucesso! Atendimento iniciado.`,
-        success: true,
-      });
-      onCouponValidated?.(code);
-      setCouponCode('');
-    } else {
-      setValidationResult({
-        text: 'Código de cupom inválido ou expirado.',
-        success: false,
-      });
-    }
+    const result = onValidateCoupon(code);
+    setValidationResult({ text: result.message, success: result.success });
+    if (result.success) setCouponCode('');
   };
 
   const handleLogoUpload = (e: ChangeEvent<HTMLInputElement>) => {
@@ -104,6 +133,10 @@ export function PartnerDashboard({
   };
 
   const handleSaveOfferPrice = (offerId: string) => {
+    if (!Number.isFinite(editOrigPrice) || !Number.isFinite(editDiscPrice) || editOrigPrice <= 0 || editDiscPrice <= 0) {
+      alert('Informe preços válidos, maiores que zero.');
+      return;
+    }
     if (editDiscPrice >= editOrigPrice) {
       alert('O preço promocional deve ser menor que o preço original!');
       return;
@@ -118,8 +151,18 @@ export function PartnerDashboard({
     const disc = parseFloat(newDiscountPrice);
     const stock = parseInt(newStockLimit, 10);
 
-    if (!newTitle.trim() || isNaN(orig) || isNaN(disc) || isNaN(stock)) {
+    if (!newTitle.trim() || !Number.isFinite(orig) || !Number.isFinite(disc) || !Number.isFinite(stock)) {
       alert('Por favor, preencha todos os campos corretamente.');
+      return;
+    }
+
+    if (orig <= 0 || disc <= 0) {
+      alert('Os preços devem ser maiores que zero.');
+      return;
+    }
+
+    if (stock < 1) {
+      alert('O limite de cupons deve ser de pelo menos 1.');
       return;
     }
 
@@ -129,7 +172,7 @@ export function PartnerDashboard({
     }
 
     onAddOffer({
-      title: newTitle,
+      title: newTitle.trim(),
       category: newCategory,
       originalPrice: orig,
       discountPrice: disc,
@@ -155,564 +198,438 @@ export function PartnerDashboard({
     }
   };
 
+  const renderReview = (rev: (typeof partnerReviewsReceived)[number], who: string) => (
+    <li key={rev.id} className={ui.review}>
+      <div className={ui.reviewHead}>
+        <span className={ui.reviewAuthor}>{who}</span>
+        <span className={ui.stars} aria-label={`${rev.rating} estrelas`}>
+          {rev.rating}
+          <Star size={18} fill="currentColor" aria-hidden="true" />
+        </span>
+      </div>
+      <p className={ui.reviewService}>{rev.serviceTitle}</p>
+      {rev.comment && <p className={ui.reviewComment}>&ldquo;{rev.comment}&rdquo;</p>}
+    </li>
+  );
+
   return (
-    <div style={{ background: '#090D16', minHeight: '100vh', padding: '16px', color: '#F1F5F9' }}>
-      {/* CABEÇALHO */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '20px',
-          paddingBottom: '12px',
-          borderBottom: '1px solid #1F293D',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <PartnerDrawer onSelectScreen={(screen) => setActivePartnerTab(screen)} partnerName={''} />
-          <div>
-            <span style={{ fontSize: '11px', color: '#00E676', fontWeight: 'bold' }}>MODO AUTO CENTER</span>
-            <h2 style={{ fontSize: '18px', margin: 0, color: '#F1F5F9' }}>{partnerForm.name}</h2>
+    <div className={styles.shell}>
+      <header className={styles.header}>
+        <div className={styles.who}>
+          <PartnerDrawer onSelectScreen={(screen) => setActivePartnerTab(screen)} partnerName={partnerForm.name} />
+          <div className={styles.whoText}>
+            <span className={styles.whoKicker}>Área do auto center</span>
+            <p className={styles.whoName}>{partnerForm.name}</p>
           </div>
         </div>
 
-        <button
-          onClick={onSwitchRole}
-          style={{
-            background: '#121826',
-            color: '#00D2FF',
-            border: '1px solid #00D2FF',
-            borderRadius: '20px',
-            padding: '6px 14px',
-            fontSize: '12px',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-          }}
-        >
-          Modo Motorista
+        <button type="button" className={ui.btnGhost} onClick={onSignOut}>
+          Sair
         </button>
-      </div>
+      </header>
 
       {activePartnerTab !== 'dashboard' && (
-        <button
-          onClick={() => setActivePartnerTab('dashboard')}
-          style={{
-            background: '#121826',
-            border: '1px solid #1F293D',
-            color: '#00D2FF',
-            borderRadius: '20px',
-            padding: '8px 16px',
-            fontSize: '13px',
-            fontWeight: '500',
-            cursor: 'pointer',
-            marginBottom: '20px',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '8px',
-          }}
-        >
-          <ArrowLeft size={16} />
-          <span>Voltar ao Painel</span>
-        </button>
+        <div className={styles.back}>
+          <BackButton onClick={() => setActivePartnerTab('dashboard')} label="Voltar ao painel" />
+        </div>
       )}
 
       {/* PAINEL PRINCIPAL */}
       {activePartnerTab === 'dashboard' && (
         <>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '22px' }}>
-            <div style={{ background: 'linear-gradient(180deg, #121826 0%, #0B1E19 100%)', padding: '14px 10px', borderRadius: '14px', border: '1px solid rgba(0, 230, 118, 0.25)', textAlign: 'center' }}>
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '6px' }}>
-                <CheckCircle2 size={20} color="#00E676" />
-              </div>
-              <span style={{ fontSize: '11px', color: '#A7F3D0', fontWeight: '500', display: 'block' }}>Baixas Mês</span>
-              <div style={{ fontSize: '20px', fontWeight: '800', color: '#00E676', marginTop: '2px' }}>28</div>
+          <section className={styles.stats} aria-label="Resumo do auto center">
+            <div className={styles.stat}>
+              <p className={`${styles.statValue} ${styles.statLane}`}>28</p>
+              <p className={styles.statLabel}>baixas no mês</p>
             </div>
-
-            <div style={{ background: 'linear-gradient(180deg, #121826 0%, #241A0E 100%)', padding: '14px 10px', borderRadius: '14px', border: '1px solid rgba(255, 159, 10, 0.25)', textAlign: 'center' }}>
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '6px' }}>
-                <Star size={20} color="#FF9F0A" fill="#FF9F0A" />
-              </div>
-              <span style={{ fontSize: '11px', color: '#FDE68A', fontWeight: '500', display: 'block' }}>Reputação ({totalReviews})</span>
-              <div style={{ fontSize: '20px', fontWeight: '800', color: '#FF9F0A', marginTop: '2px' }}>{averageRating} ★</div>
+            <div className={styles.stat}>
+              <p className={`${styles.statValue} ${styles.statWarn}`}>{averageRating}</p>
+              <p className={styles.statLabel}>nota ({totalReviews})</p>
             </div>
-
-            <div style={{ background: 'linear-gradient(180deg, #121826 0%, #0A2233 100%)', padding: '14px 10px', borderRadius: '14px', border: '1px solid rgba(0, 210, 255, 0.25)', textAlign: 'center' }}>
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '6px' }}>
-                <Clock size={20} color="#00D2FF" />
-              </div>
-              <span style={{ fontSize: '11px', color: '#BAE6FD', fontWeight: '500', display: 'block' }}>Pendentes</span>
-              <div style={{ fontSize: '20px', fontWeight: '800', color: '#00D2FF', marginTop: '2px' }}>{partnerPendingReviews.length}</div>
+            <div className={styles.stat}>
+              <p className={styles.statValue}>{partnerPendingReviews.length}</p>
+              <p className={styles.statLabel}>a avaliar</p>
             </div>
-          </div>
+          </section>
 
-          <div style={{ background: '#121826', padding: '16px', borderRadius: '14px', marginBottom: '20px', border: '1px solid #1F293D' }}>
-            <h3 style={{ fontSize: '15px', color: '#00D2FF', marginTop: 0, marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <ScanLine size={18} />
-              <span>Validar Cupom no Balcão</span>
+          <section className={styles.counter} aria-label="Validar cupom">
+            <h3 className={styles.counterTitle}>
+              <ScanLine size={26} aria-hidden="true" />
+              Validar cupom no balcão
             </h3>
-            <form onSubmit={handleValidate} style={{ display: 'flex', gap: '8px' }}>
+            <form onSubmit={handleValidate} className={styles.counterForm}>
               <input
                 type="text"
-                placeholder="Digite o código ex: CLUB-PAR-8921-XK9"
+                className={styles.codeInput}
+                placeholder="CLUB-PAR-0000-XXXX"
+                aria-label="Código do cupom"
+                autoComplete="off"
                 value={couponCode}
                 onChange={(e) => setCouponCode(e.target.value)}
-                style={{
-                  flex: 1,
-                  padding: '10px',
-                  borderRadius: '10px',
-                  background: '#090D16',
-                  border: '1px solid #1F293D',
-                  color: '#F1F5F9',
-                  fontSize: '13px',
-                }}
               />
-              <button
-                type="submit"
-                style={{
-                  background: '#00E676',
-                  color: '#090D16',
-                  border: 'none',
-                  borderRadius: '10px',
-                  padding: '0 16px',
-                  fontWeight: 'bold',
-                  cursor: 'pointer',
-                }}
-              >
-                Validar
+              <button type="submit" className={ui.btn}>
+                Validar cupom
               </button>
             </form>
 
             {validationResult && (
-              <div
-                style={{
-                  marginTop: '10px',
-                  padding: '10px 12px',
-                  borderRadius: '8px',
-                  fontSize: '13px',
-                  background: validationResult.success ? 'rgba(0, 230, 118, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-                  color: validationResult.success ? '#00E676' : '#FCA5A5',
-                  border: validationResult.success ? '1px solid #00E676' : '1px solid #EF4444',
-                }}
+              <p
+                role="status"
+                className={`${styles.result} ${validationResult.success ? '' : styles.resultError}`}
               >
                 {validationResult.text}
-              </div>
+              </p>
             )}
-          </div>
+          </section>
 
-          <div style={{ background: '#121826', padding: '16px', borderRadius: '14px', marginBottom: '20px', border: '1px solid rgba(255, 159, 10, 0.3)' }}>
-            <h3 style={{ fontSize: '15px', color: '#FF9F0A', marginTop: 0, marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <UserCheck size={18} />
-              <span>Avaliar Atendimento do Motorista ({partnerPendingReviews.length})</span>
-            </h3>
+          <section className={styles.section}>
+            <div className={styles.sectionHead}>
+              <h3 className={styles.sectionTitle}>Motoristas para avaliar</h3>
+            </div>
 
             {partnerPendingReviews.length === 0 ? (
-              <p style={{ fontSize: '13px', color: '#94A3B8', margin: 0 }}>Nenhum motorista aguardando avaliação no momento.</p>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                {partnerPendingReviews.map((rev) => (
-                  <div
-                    key={rev.id}
-                    style={{
-                      background: '#090D16',
-                      padding: '12px',
-                      borderRadius: '10px',
-                      border: '1px solid #1F293D',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <div>
-                      <div style={{ fontWeight: 'bold', fontSize: '14px', color: '#F1F5F9' }}>
-                        {rev.driverName}
-                      </div>
-                      <div style={{ fontSize: '12px', color: '#94A3B8' }}>
-                        {rev.serviceTitle} • <span style={{ color: '#00D2FF' }}>{rev.couponCode}</span>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => onFinishService(rev.id)}
-                      style={{
-                        background: '#FF9F0A',
-                        color: '#090D16',
-                        border: 'none',
-                        borderRadius: '8px',
-                        padding: '8px 12px',
-                        fontWeight: 'bold',
-                        fontSize: '12px',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                      }}
-                    >
-                      <Star size={14} fill="#090D16" />
-                      <span>Avaliar Motorista</span>
-                    </button>
-                  </div>
-                ))}
+              <div className={ui.empty}>
+                <p className={ui.emptyTitle}>Nenhum motorista aguardando</p>
+                <p>Depois de validar um cupom, o atendimento aparece aqui para você avaliar.</p>
               </div>
+            ) : (
+              <ul className={styles.pending}>
+                {partnerPendingReviews.map((rev) => (
+                  <li key={rev.id} className={styles.pendingItem}>
+                    <div>
+                      <p className={styles.pendingName}>{rev.driverName}</p>
+                      <p className={styles.pendingMeta}>
+                        {rev.serviceTitle}, cupom <span className={styles.pendingCode}>{rev.couponCode}</span>
+                      </p>
+                    </div>
+                    <button type="button" className={styles.warnBtn} onClick={() => onFinishService(rev.id)}>
+                      <UserCheck size={18} aria-hidden="true" />
+                      Avaliar
+                    </button>
+                  </li>
+                ))}
+              </ul>
             )}
-          </div>
+          </section>
 
-          <div style={{ background: '#121826', padding: '16px', borderRadius: '14px', border: '1px solid #1F293D' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-              <h3 style={{ fontSize: '15px', color: '#00D2FF', margin: 0 }}>
-                Minhas Ofertas Promocionais & Estoque
-              </h3>
-              <button
-                onClick={() => setActivePartnerTab('cadastrar')}
-                style={{
-                  background: '#00E676',
-                  color: '#090D16',
-                  border: 'none',
-                  borderRadius: '20px',
-                  padding: '6px 12px',
-                  fontSize: '12px',
-                  fontWeight: 'bold',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                }}
-              >
-                <PlusCircle size={14} />
-                <span>Nova Oferta</span>
+          <section className={styles.section}>
+            <div className={styles.sectionHead}>
+              <h3 className={styles.sectionTitle}>Ofertas e estoque</h3>
+              <button type="button" className={ui.btnSmall} onClick={() => setActivePartnerTab('cadastrar')}>
+                <PlusCircle size={18} aria-hidden="true" />
+                Nova oferta
               </button>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div className={styles.offers}>
               {offers.map((offer) => {
                 const isEditing = editingOfferId === offer.id;
                 return (
-                  <div
+                  <article
                     key={offer.id}
-                    style={{
-                      background: '#090D16',
-                      padding: '12px',
-                      borderRadius: '10px',
-                      border: '1px solid #1F293D',
-                    }}
+                    className={`${styles.offer} ${offer.active ? '' : styles.offerPaused}`}
                   >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                      <span style={{ fontWeight: 'bold', fontSize: '14px', color: '#F1F5F9' }}>{offer.title}</span>
+                    <div className={styles.offerHead}>
+                      <h4 className={styles.offerTitle}>{offer.title}</h4>
                       <button
+                        type="button"
+                        aria-pressed={offer.active}
+                        className={`${styles.toggle} ${offer.active ? '' : styles.toggleOff}`}
                         onClick={() => onToggleOffer(offer.id)}
-                        style={{
-                          background: offer.active ? 'rgba(0, 230, 118, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-                          color: offer.active ? '#00E676' : '#FCA5A5',
-                          border: offer.active ? '1px solid #00E676' : '1px solid #EF4444',
-                          padding: '2px 8px',
-                          borderRadius: '6px',
-                          fontSize: '11px',
-                          fontWeight: 'bold',
-                          cursor: 'pointer',
-                        }}
                       >
                         {offer.active ? 'Ativa' : 'Pausada'}
                       </button>
                     </div>
 
                     {isEditing ? (
-                      <div style={{ display: 'flex', gap: '8px', margin: '10px 0', alignItems: 'center' }}>
-                        <div>
-                          <label style={{ fontSize: '10px', color: '#94A3B8' }}>Original (R$)</label>
+                      <div className={styles.editRow}>
+                        <div className={ui.field}>
+                          <label className={ui.label} htmlFor={`orig-${offer.id}`}>Preço normal</label>
                           <input
+                            id={`orig-${offer.id}`}
+                            className={ui.input}
                             type="number"
                             value={editOrigPrice}
                             onChange={(e) => setEditOrigPrice(parseFloat(e.target.value))}
-                            style={{ width: '80px', padding: '4px', background: '#121826', border: '1px solid #1F293D', color: '#fff', borderRadius: '4px', fontSize: '12px' }}
                           />
                         </div>
-                        <div>
-                          <label style={{ fontSize: '10px', color: '#00E676' }}>Promocional (R$)</label>
+                        <div className={ui.field}>
+                          <label className={ui.label} htmlFor={`disc-${offer.id}`}>Promocional</label>
                           <input
+                            id={`disc-${offer.id}`}
+                            className={`${ui.input} ${ui.inputPrice}`}
                             type="number"
                             value={editDiscPrice}
                             onChange={(e) => setEditDiscPrice(parseFloat(e.target.value))}
-                            style={{ width: '80px', padding: '4px', background: '#121826', border: '1px solid #00E676', color: '#00E676', borderRadius: '4px', fontSize: '12px', fontWeight: 'bold' }}
                           />
                         </div>
                         <button
+                          type="button"
+                          className={styles.iconBtn}
+                          aria-label="Salvar preços"
                           onClick={() => handleSaveOfferPrice(offer.id)}
-                          style={{ marginTop: '14px', background: '#00E676', color: '#090D16', border: 'none', borderRadius: '4px', padding: '6px 10px', cursor: 'pointer' }}
                         >
-                          <Save size={14} />
+                          <Save size={20} aria-hidden="true" />
                         </button>
                       </div>
                     ) : (
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '6px 0' }}>
-                        <div style={{ fontSize: '13px', color: '#00E676' }}>
-                          Preço Promocional: <strong>R$ {offer.discountPrice.toFixed(2)}</strong> (De R$ {offer.originalPrice.toFixed(2)})
-                        </div>
+                      <div className={styles.priceLine}>
+                        <p className={styles.price}>
+                          {brl(offer.discountPrice)}
+                          <span className={styles.priceWas}>{brl(offer.originalPrice)}</span>
+                        </p>
                         <button
+                          type="button"
+                          className={styles.iconBtn}
+                          aria-label="Editar preços"
                           onClick={() => handleStartEditOffer(offer)}
-                          style={{ background: 'transparent', border: 'none', color: '#00D2FF', cursor: 'pointer', padding: '2px 4px' }}
                         >
-                          <Edit3 size={15} />
+                          <Edit3 size={20} aria-hidden="true" />
                         </button>
                       </div>
                     )}
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '8px' }}>
-                      <span style={{ fontSize: '12px', color: '#94A3B8' }}>Limite de Cupons:</span>
-                      <button
-                        onClick={() => onUpdateStock(offer.id, Math.max(0, offer.stockRemaining - 1))}
-                        style={{ background: '#1F293D', color: '#fff', border: 'none', padding: '2px 8px', borderRadius: '4px', cursor: 'pointer' }}
-                      >
-                        -
-                      </button>
-                      <span style={{ fontSize: '13px', fontWeight: 'bold' }}>{offer.stockRemaining} restantes</span>
-                      <button
-                        onClick={() => onUpdateStock(offer.id, offer.stockRemaining + 1)}
-                        style={{ background: '#1F293D', color: '#fff', border: 'none', padding: '2px 8px', borderRadius: '4px', cursor: 'pointer' }}
-                      >
-                        +
-                      </button>
+                    <div className={styles.stock}>
+                      <span className={styles.stockLabel}>Cupons restantes</span>
+                      <div className={styles.stepper}>
+                        <button
+                          type="button"
+                          className={styles.iconBtn}
+                          aria-label="Diminuir estoque"
+                          onClick={() => onUpdateStock(offer.id, Math.max(0, offer.stockRemaining - 1))}
+                        >
+                          <Minus size={20} aria-hidden="true" />
+                        </button>
+                        <span className={styles.stepValue}>{offer.stockRemaining}</span>
+                        <button
+                          type="button"
+                          className={styles.iconBtn}
+                          aria-label="Aumentar estoque"
+                          disabled={offer.stockRemaining >= offer.stockLimit}
+                          onClick={() => onUpdateStock(offer.id, offer.stockRemaining + 1)}
+                        >
+                          <Plus size={20} aria-hidden="true" />
+                        </button>
+                      </div>
                     </div>
-                  </div>
+                  </article>
                 );
               })}
             </div>
-          </div>
+          </section>
         </>
       )}
 
-      {/* ABA DE CADASTRO E IMPORTAÇÃO */}
+      {/* CADASTRO E IMPORTAÇÃO */}
       {activePartnerTab === 'cadastrar' && (
-        <div style={{ background: '#121826', padding: '20px', borderRadius: '14px', border: '1px solid #1F293D' }}>
-          <h3 style={{ color: '#00E676', marginTop: 0, marginBottom: '4px' }}>Cadastrar Serviços & Peças</h3>
-          <p style={{ color: '#94A3B8', fontSize: '12px', marginBottom: '20px' }}>
-            Adicione novas ofertas manualmente ou importe uma planilha com seu catálogo completo de produtos.
-          </p>
+        <section className={`${ui.panel} ${styles.narrow}`} style={{ marginTop: 12 }}>
+          <h2 className={ui.title}>Cadastrar ofertas</h2>
+          <p className={ui.lead}>Adicione uma oferta agora ou importe uma planilha com o catálogo inteiro.</p>
 
-          <div
-            style={{
-              border: '2px dashed #00D2FF',
-              background: '#090D16',
-              borderRadius: '10px',
-              padding: '20px',
-              textAlign: 'center',
-              marginBottom: '24px',
-            }}
-          >
-            <FileSpreadsheet size={36} color="#00D2FF" style={{ margin: '0 auto 8px' }} />
-            <h4 style={{ margin: '0 0 4px', fontSize: '14px', color: '#F1F5F9' }}>Importação em Lote via Arquivo</h4>
-            <p style={{ color: '#94A3B8', fontSize: '12px', margin: '0 0 12px' }}>
-              Suba arquivos CSV ou Excel para cadastrar múltiplos produtos e peças de uma só vez.
-            </p>
-            <label
-              style={{
-                background: '#00D2FF',
-                color: '#090D16',
-                padding: '8px 16px',
-                borderRadius: '20px',
-                fontWeight: 'bold',
-                fontSize: '12px',
-                cursor: 'pointer',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-              }}
-            >
-              <Upload size={14} />
-              <span>Selecionar Arquivo (CSV / Excel)</span>
-              <input type="file" accept=".csv, .xlsx, .json" onChange={handleFileUpload} style={{ display: 'none' }} />
+          <div className={styles.importBox}>
+            <FileSpreadsheet size={34} color="#6ca6ff" aria-hidden="true" />
+            <p className={styles.importTitle}>Importar planilha</p>
+            <p className={ui.muted}>Envie um arquivo CSV ou Excel para cadastrar vários itens de uma vez.</p>
+            <label className={ui.upload}>
+              <Upload size={18} aria-hidden="true" />
+              Escolher arquivo
+              <input type="file" accept=".csv, .xlsx, .json" onChange={handleFileUpload} />
             </label>
           </div>
 
-          <hr style={{ border: 'none', borderTop: '1px solid #1F293D', margin: '20px 0' }} />
-
-          <h4 style={{ color: '#F1F5F9', fontSize: '15px', marginBottom: '12px' }}>Cadastro Manual Rápido</h4>
-          <form onSubmit={handleCreateNewOffer} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <div>
-              <label style={{ fontSize: '12px', color: '#94A3B8', display: 'block', marginBottom: '4px' }}>Título do Serviço / Peça</label>
+          <h3 className={ui.subtitle}>Cadastro manual</h3>
+          <form onSubmit={handleCreateNewOffer} className={ui.form}>
+            <div className={ui.field}>
+              <label className={ui.label} htmlFor="no-title">Título do serviço ou peça</label>
               <input
+                id="no-title"
+                className={ui.input}
                 type="text"
-                placeholder="Ex: Troca de Pastilha de Freio Dianteira"
+                placeholder="Ex: Troca de pastilha de freio dianteira"
                 value={newTitle}
                 onChange={(e) => setNewTitle(e.target.value)}
-                style={{ width: '100%', padding: '10px', borderRadius: '10px', background: '#090D16', border: '1px solid #1F293D', color: '#F1F5F9', fontSize: '13px' }}
               />
             </div>
 
-            <div>
-              <label style={{ fontSize: '12px', color: '#94A3B8', display: 'block', marginBottom: '4px' }}>Categoria</label>
+            <div className={ui.field}>
+              <label className={ui.label} htmlFor="no-cat">Categoria</label>
               <select
+                id="no-cat"
+                className={ui.input}
                 value={newCategory}
                 onChange={(e) => setNewCategory(e.target.value as 'alinhamento' | 'pneus' | 'oleo' | 'combustivel' | 'lavagem')}
-                style={{ width: '100%', padding: '10px', borderRadius: '10px', background: '#090D16', border: '1px solid #1F293D', color: '#F1F5F9', fontSize: '13px' }}
               >
-                <option value="alinhamento">Alinhamento & Suspensão</option>
-                <option value="oleo">Óleo & Filtros</option>
-                <option value="pneus">Pneus & Rodas</option>
+                <option value="alinhamento">Alinhamento e suspensão</option>
+                <option value="oleo">Óleo e filtros</option>
+                <option value="pneus">Pneus e rodas</option>
                 <option value="combustivel">Combustível</option>
-                <option value="lavagem">Lavagem & Estética</option>
+                <option value="lavagem">Lavagem e estética</option>
               </select>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-              <div>
-                <label style={{ fontSize: '12px', color: '#94A3B8', display: 'block', marginBottom: '4px' }}>Preço Normal (R$)</label>
+            <div className={ui.row}>
+              <div className={ui.field}>
+                <label className={ui.label} htmlFor="no-orig">Normal (R$)</label>
                 <input
+                  id="no-orig"
+                  className={ui.input}
                   type="number"
                   step="0.01"
-                  placeholder="200.00"
+                  inputMode="decimal"
+                  placeholder="200,00"
                   value={newOriginalPrice}
                   onChange={(e) => setNewOriginalPrice(e.target.value)}
-                  style={{ width: '100%', padding: '10px', borderRadius: '10px', background: '#090D16', border: '1px solid #1F293D', color: '#F1F5F9', fontSize: '13px' }}
                 />
               </div>
-
-              <div>
-                <label style={{ fontSize: '12px', color: '#00E676', display: 'block', marginBottom: '4px' }}>Preço Promocional (R$)</label>
+              <div className={ui.field}>
+                <label className={ui.label} htmlFor="no-disc">Promocional (R$)</label>
                 <input
+                  id="no-disc"
+                  className={`${ui.input} ${ui.inputPrice}`}
                   type="number"
                   step="0.01"
-                  placeholder="140.00"
+                  inputMode="decimal"
+                  placeholder="140,00"
                   value={newDiscountPrice}
                   onChange={(e) => setNewDiscountPrice(e.target.value)}
-                  style={{ width: '100%', padding: '10px', borderRadius: '10px', background: '#090D16', border: '1px solid #00E676', color: '#00E676', fontWeight: 'bold', fontSize: '13px' }}
                 />
               </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '4px 0', background: '#090D16', padding: '10px', borderRadius: '10px', border: '1px solid #00E676' }}>
+            <div className={ui.field}>
+              <label className={ui.label} htmlFor="no-stock">Limite de cupons</label>
+              <input
+                id="no-stock"
+                className={ui.input}
+                type="number"
+                inputMode="numeric"
+                placeholder="Ex: 10"
+                value={newStockLimit}
+                onChange={(e) => setNewStockLimit(e.target.value)}
+              />
+            </div>
+
+            <label className={styles.check} htmlFor="dailyOfferCheck">
               <input
                 type="checkbox"
                 id="dailyOfferCheck"
                 checked={newIsDailyOffer}
                 onChange={(e) => setNewIsDailyOffer(e.target.checked)}
-                style={{ cursor: 'pointer', width: '16px', height: '16px' }}
               />
-              <label htmlFor="dailyOfferCheck" style={{ fontSize: '12px', color: '#00E676', cursor: 'pointer', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Flame size={14} />
-                <span>Destacar como &quot;Oferta do Dia&quot; (Validade de 24h)</span>
-              </label>
-            </div>
+              <Flame size={18} aria-hidden="true" />
+              Destacar como oferta do dia (24h)
+            </label>
 
-            <div>
-              <label style={{ fontSize: '12px', color: '#94A3B8', display: 'block', marginBottom: '4px' }}>Limite de Cupons Promocionais</label>
-              <input
-                type="number"
-                placeholder="Ex: 10"
-                value={newStockLimit}
-                onChange={(e) => setNewStockLimit(e.target.value)}
-                style={{ width: '100%', padding: '10px', borderRadius: '10px', background: '#090D16', border: '1px solid #1F293D', color: '#F1F5F9', fontSize: '13px' }}
-              />
-            </div>
-
-            <button
-              type="submit"
-              style={{ marginTop: '8px', background: '#00E676', color: '#090D16', border: 'none', borderRadius: '10px', padding: '12px', fontWeight: 'bold', cursor: 'pointer', fontSize: '14px' }}
-            >
-              Publicar Oferta no Clube Auto
+            <button type="submit" className={ui.btn}>
+              Publicar oferta
             </button>
           </form>
-        </div>
+        </section>
       )}
 
-      {/* ABA DE PERFIL E DADOS DA OFICINA (RESTAURADA E COMPLETA) */}
+      {/* DADOS DA OFICINA */}
       {activePartnerTab === 'perfil' && (
-        <div style={{ background: '#121826', padding: '20px', borderRadius: '14px', border: '1px solid #1F293D' }}>
-          <h3 style={{ color: '#00E676', marginTop: 0, marginBottom: '15px' }}>Dados & Fotos da Oficina</h3>
+        <section className={`${ui.panel} ${styles.narrow}`} style={{ marginTop: 12 }}>
+          <h2 className={ui.title}>Dados da oficina</h2>
+          <p className={ui.lead}>A localização (GPS ou endereço) é usada na rota do cupom do motorista.</p>
 
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
-            <div style={{ width: '100px', height: '100px', borderRadius: '14px', overflow: 'hidden', background: '#090D16', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px', border: '2px solid #00E676' }}>
+          <div className={ui.avatarBlock}>
+            <div className={ui.logo}>
               {partnerForm.logoUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={partnerForm.logoUrl} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <img src={partnerForm.logoUrl} alt="Logo do auto center" />
               ) : (
-                <Building2 size={40} color="#94A3B8" />
+                <Building2 size={42} aria-hidden="true" />
               )}
             </div>
-            <label style={{ background: '#1F293D', color: '#F1F5F9', padding: '8px 16px', borderRadius: '20px', fontSize: '12px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: 'bold' }}>
-              <Upload size={14} />
-              <span>Alterar Logo / Fachada</span>
-              <input type="file" accept="image/*" onChange={handleLogoUpload} style={{ display: 'none' }} />
+            <label className={ui.upload}>
+              <Upload size={18} aria-hidden="true" />
+              Trocar logo ou fachada
+              <input type="file" accept="image/*" onChange={handleLogoUpload} />
             </label>
           </div>
 
-          <form onSubmit={handleSavePartnerProfile} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <div>
-              <label style={{ fontSize: '12px', color: '#94A3B8', display: 'block', marginBottom: '4px' }}>Nome Fantasia</label>
-              <input type="text" value={partnerForm.name} onChange={(e) => setPartnerForm({ ...partnerForm, name: e.target.value })} style={{ width: '100%', padding: '10px', borderRadius: '10px', background: '#090D16', border: '1px solid #1F293D', color: '#F1F5F9', fontSize: '13px' }} />
+          <form onSubmit={handleSavePartnerProfile} className={ui.form}>
+            <div className={ui.field}>
+              <label className={ui.label} htmlFor="pp-name">Nome fantasia</label>
+              <input id="pp-name" className={ui.input} type="text" value={partnerForm.name} onChange={(e) => setPartnerForm({ ...partnerForm, name: e.target.value })} />
             </div>
-            <div>
-              <label style={{ fontSize: '12px', color: '#94A3B8', display: 'block', marginBottom: '4px' }}>CNPJ</label>
-              <input type="text" value={partnerForm.cnpj} onChange={(e) => setPartnerForm({ ...partnerForm, cnpj: e.target.value })} style={{ width: '100%', padding: '10px', borderRadius: '10px', background: '#090D16', border: '1px solid #1F293D', color: '#F1F5F9', fontSize: '13px' }} />
+            <div className={ui.field}>
+              <label className={ui.label} htmlFor="pp-cnpj">CNPJ</label>
+              <input id="pp-cnpj" className={ui.input} type="text" inputMode="numeric" value={partnerForm.cnpj} onChange={(e) => setPartnerForm({ ...partnerForm, cnpj: e.target.value })} />
             </div>
-            <div>
-              <label style={{ fontSize: '12px', color: '#94A3B8', display: 'block', marginBottom: '4px' }}>Endereço Completo (Usado no GPS do Cupom)</label>
-              <input type="text" value={partnerForm.address} onChange={(e) => setPartnerForm({ ...partnerForm, address: e.target.value })} style={{ width: '100%', padding: '10px', borderRadius: '10px', background: '#090D16', border: '1px solid #1F293D', color: '#F1F5F9', fontSize: '13px' }} />
+            <div className={ui.field}>
+              <label className={ui.label} htmlFor="pp-addr">Endereço completo</label>
+              <input id="pp-addr" className={ui.input} type="text" value={partnerForm.address} onChange={(e) => setPartnerForm({ ...partnerForm, address: e.target.value })} />
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-              <div>
-                <label style={{ fontSize: '12px', color: '#94A3B8', display: 'block', marginBottom: '4px' }}>Telefone / WhatsApp</label>
-                <input type="text" value={partnerForm.phone} onChange={(e) => setPartnerForm({ ...partnerForm, phone: e.target.value })} style={{ width: '100%', padding: '10px', borderRadius: '10px', background: '#090D16', border: '1px solid #1F293D', color: '#F1F5F9', fontSize: '13px' }} />
+            <div className={ui.field}>
+              <span className={ui.label}>Localização exata (GPS)</span>
+              <button type="button" className={ui.btnGhost} onClick={handleCaptureLocation} disabled={locating}>
+                <MapPin size={18} aria-hidden="true" />
+                {locating ? 'Obtendo localização...' : partnerForm.latitude != null ? 'Atualizar localização' : 'Usar minha localização atual'}
+              </button>
+              {partnerForm.latitude != null && partnerForm.longitude != null && (
+                <p className={ui.lead} role="status">
+                  {partnerForm.latitude.toFixed(6)}, {partnerForm.longitude.toFixed(6)}
+                  {partnerForm.locationAccuracyM != null && ` (precisão ~${Math.round(partnerForm.locationAccuracyM)} m)`}
+                  {' · '}
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${partnerForm.latitude},${partnerForm.longitude}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Ver no mapa
+                  </a>
+                </p>
+              )}
+              {locationError && <p className={ui.lead} role="alert">{locationError}</p>}
+              <p className={ui.lead}>
+                Para oficinas sem loja física: fique no local do atendimento e toque no botão. Lembre de salvar os dados.
+              </p>
+            </div>
+            <div className={ui.row}>
+              <div className={ui.field}>
+                <label className={ui.label} htmlFor="pp-phone">Telefone ou WhatsApp</label>
+                <input id="pp-phone" className={ui.input} type="tel" value={partnerForm.phone} onChange={(e) => setPartnerForm({ ...partnerForm, phone: e.target.value })} />
               </div>
-              <div>
-                <label style={{ fontSize: '12px', color: '#94A3B8', display: 'block', marginBottom: '4px' }}>Horário de Func.</label>
-                <input type="text" value={partnerForm.workingHours} onChange={(e) => setPartnerForm({ ...partnerForm, workingHours: e.target.value })} style={{ width: '100%', padding: '10px', borderRadius: '10px', background: '#090D16', border: '1px solid #1F293D', color: '#F1F5F9', fontSize: '13px' }} />
+              <div className={ui.field}>
+                <label className={ui.label} htmlFor="pp-hours">Horário</label>
+                <input id="pp-hours" className={ui.input} type="text" value={partnerForm.workingHours} onChange={(e) => setPartnerForm({ ...partnerForm, workingHours: e.target.value })} />
               </div>
             </div>
-            <button type="submit" style={{ marginTop: '10px', background: '#00E676', color: '#090D16', border: 'none', borderRadius: '10px', padding: '12px', fontWeight: 'bold', cursor: 'pointer', fontSize: '14px' }}>
-              Salvar Alterações do Estabelecimento
+            <button type="submit" className={ui.btn}>
+              Salvar dados
             </button>
           </form>
-        </div>
+        </section>
       )}
 
-      {/* AVALIAÇÕES RECEBIDAS E ENVIADAS */}
+      {/* AVALIAÇÕES */}
       {activePartnerTab === 'avaliacoes' && (
-        <div style={{ background: '#121826', padding: '20px', borderRadius: '14px', border: '1px solid #1F293D' }}>
-          <h3 style={{ color: '#FF9F0A', marginTop: 0, marginBottom: '15px' }}>⭐ Avaliações Recebidas & Enviadas</h3>
+        <section className={`${ui.panel} ${styles.narrow}`} style={{ marginTop: 12 }}>
+          <h2 className={ui.title}>Avaliações</h2>
 
-          <h4 style={{ fontSize: '14px', color: '#00D2FF', marginBottom: '8px' }}>Avaliações dos Motoristas sobre o Auto Center</h4>
+          <h3 className={ui.subtitle}>Motoristas sobre o auto center</h3>
           {partnerReviewsReceived.length === 0 ? (
-            <p style={{ color: '#94A3B8', fontSize: '13px', marginBottom: '20px' }}>Nenhuma avaliação recebida ainda.</p>
+            <p className={ui.muted}>Nenhuma avaliação recebida ainda.</p>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
-              {partnerReviewsReceived.map((rev) => (
-                <div key={rev.id} style={{ background: '#090D16', padding: '12px', borderRadius: '10px', border: '1px solid #1F293D' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                    <span style={{ fontWeight: 'bold', fontSize: '13px', color: '#F1F5F9' }}>{rev.authorName}</span>
-                    <span style={{ color: '#FF9F0A', fontWeight: 'bold' }}>{rev.rating} ★</span>
-                  </div>
-                  <div style={{ fontSize: '12px', color: '#94A3B8', marginBottom: '6px' }}>{rev.serviceTitle}</div>
-                  {rev.comment && <p style={{ fontSize: '12px', color: '#CBD5E1', fontStyle: 'italic', margin: 0 }}>&quot;{rev.comment}&quot;</p>}
-                </div>
-              ))}
-            </div>
+            <ul className={ui.reviews}>{partnerReviewsReceived.map((rev) => renderReview(rev, rev.authorName))}</ul>
           )}
 
-          <h4 style={{ fontSize: '14px', color: '#00E676', marginBottom: '8px' }}>Suas Avaliações sobre Motoristas</h4>
+          <h3 className={ui.subtitle}>Suas avaliações de motoristas</h3>
           {driverReviewsGiven.length === 0 ? (
-            <p style={{ color: '#94A3B8', fontSize: '13px' }}>Você ainda não avaliou nenhum motorista.</p>
+            <p className={ui.muted}>Você ainda não avaliou nenhum motorista.</p>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {driverReviewsGiven.map((rev) => (
-                <div key={rev.id} style={{ background: '#090D16', padding: '12px', borderRadius: '10px', border: '1px solid rgba(0, 230, 118, 0.3)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                    <span style={{ fontWeight: 'bold', fontSize: '13px', color: '#00E676' }}>Motorista: {rev.targetName}</span>
-                    <span style={{ color: '#FF9F0A', fontWeight: 'bold' }}>{rev.rating} ★</span>
-                  </div>
-                  <div style={{ fontSize: '12px', color: '#94A3B8', marginBottom: '6px' }}>{rev.serviceTitle}</div>
-                  {rev.comment && <p style={{ fontSize: '12px', color: '#CBD5E1', fontStyle: 'italic', margin: 0 }}>&quot;{rev.comment}&quot;</p>}
-                </div>
-              ))}
-            </div>
+            <ul className={ui.reviews}>{driverReviewsGiven.map((rev) => renderReview(rev, rev.targetName))}</ul>
           )}
-        </div>
+        </section>
       )}
 
       {activePartnerTab === 'suporte' && (
-        <div style={{ background: '#121826', padding: '20px', borderRadius: '14px', border: '1px solid #1F293D' }}>
-          <h3 style={{ color: '#00D2FF', marginTop: 0 }}>Suporte & Ajuda</h3>
-          <p style={{ color: '#94A3B8', fontSize: '13px' }}>Precisa de ajuda com cupons ou cadastro? Fale com nosso time de atendimento.</p>
-        </div>
+        <section className={`${ui.panel} ${styles.narrow}`} style={{ marginTop: 12 }}>
+          <h2 className={ui.title}>Suporte e ajuda</h2>
+          <p className={ui.lead}>Precisa de ajuda com cupons ou cadastro? Fale com o time de atendimento.</p>
+        </section>
       )}
     </div>
   );
