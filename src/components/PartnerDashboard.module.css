@@ -1,0 +1,409 @@
+.shell {
+  width: 100%;
+  max-width: 1040px;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: 16px 16px 56px;
+}
+
+/* ---------- Cabeçalho ---------- */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.who {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.whoText {
+  min-width: 0;
+  line-height: 1.1;
+}
+
+.whoKicker {
+  display: inline-block;
+  margin-bottom: 3px;
+  padding: 2px 7px;
+  border-radius: var(--radius-chip);
+  background: var(--lane);
+  color: var(--paper-ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.whoName {
+  overflow: hidden;
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.back {
+  margin-top: 16px;
+}
+
+/* ---------- Números do dia ---------- */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 20px 0 24px;
+  border-bottom: 1px dashed var(--line);
+}
+
+.stat {
+  padding: 0 12px 20px;
+  border-left: 1px solid var(--line-soft);
+}
+
+.stat:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+
+.statValue {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 11vw, 56px);
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.statLabel {
+  margin-top: 4px;
+  font-size: 15px;
+  color: var(--ink-muted);
+}
+
+.statWarn {
+  color: var(--warn);
+}
+
+.statLane {
+  color: var(--lane);
+}
+
+/* ---------- Balcão: validar cupom ---------- */
+.counter {
+  padding: 18px 16px;
+  border: 2px dashed var(--lane);
+  border-radius: var(--radius-ticket);
+  background: var(--asphalt-deep);
+}
+
+.counterTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.counterForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.codeInput {
+  width: 100%;
+  min-height: 60px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  background: var(--graphite);
+  color: var(--lane);
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.codeInput::placeholder {
+  color: var(--ink-faint);
+  font-weight: 600;
+}
+
+.codeInput:focus {
+  border-color: var(--lane);
+  outline: none;
+}
+
+.result {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-left: 4px solid var(--go);
+  border-radius: 4px var(--radius-control) var(--radius-control) 4px;
+  background: rgba(67, 209, 122, 0.12);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.resultError {
+  border-left-color: var(--stop);
+  background: rgba(255, 90, 79, 0.12);
+}
+
+/* ---------- Seções ---------- */
+.section {
+  margin-top: 28px;
+}
+
+.sectionHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.pending {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  list-style: none;
+}
+
+.pendingItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--graphite);
+  border-left: 4px solid var(--warn);
+  border-radius: 4px var(--radius-control) var(--radius-control) 4px;
+}
+
+.pendingName {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.pendingMeta {
+  font-size: 15px;
+  color: var(--ink-muted);
+}
+
+.pendingCode {
+  color: var(--plate-soft);
+  font-weight: 600;
+}
+
+.warnBtn {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: var(--warn);
+  color: var(--paper-ink);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ---------- Ofertas e estoque ---------- */
+.offers {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr));
+  gap: 12px;
+}
+
+.offer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: var(--graphite);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-ticket);
+}
+
+.offerPaused {
+  border-style: dashed;
+}
+
+.offerHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.offerTitle {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.toggle {
+  flex-shrink: 0;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--go);
+  border-radius: var(--radius-chip);
+  background: rgba(67, 209, 122, 0.12);
+  color: var(--go);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.toggleOff {
+  border-color: var(--line);
+  background: transparent;
+  color: var(--ink-muted);
+}
+
+.priceLine {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.price {
+  font-family: var(--font-display);
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--lane);
+}
+
+.priceWas {
+  margin-left: 8px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink-muted);
+  text-decoration: line-through;
+}
+
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.iconBtn:hover {
+  border-color: var(--lane);
+  color: var(--lane);
+}
+
+.editRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.editRow > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.stock {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--line);
+}
+
+.stockLabel {
+  font-size: 15px;
+  color: var(--ink-muted);
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stepValue {
+  min-width: 44px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Cadastro ---------- */
+.importBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 18px 0 8px;
+  padding: 22px 16px;
+  border: 2px dashed var(--line);
+  border-radius: var(--radius-ticket);
+  background: var(--asphalt-deep);
+  text-align: center;
+}
+
+.importTitle {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 0 14px;
+  border: 1px solid var(--lane);
+  border-radius: var(--radius-control);
+  color: var(--lane);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.check input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--lane);
+}
+
+.narrow {
+  max-width: 560px;
+}

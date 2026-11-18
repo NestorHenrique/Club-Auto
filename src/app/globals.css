@@ -1,40 +1,87 @@
+/* Clube Auto — tokens e base
+   Paleta: asfalto, faixa de sinalização, papel de ticket. */
 :root {
-  color-scheme: light;
-  background: #f8fafc;
-  color: #0f172a;
-  font-family: Arial, Helvetica, sans-serif;
-  line-height: 1.6;
+  --asphalt: #131315;
+  --asphalt-deep: #0d0d0f;
+  --graphite: #1c1c1f;
+  --graphite-raised: #26262a;
+  --line: #34343a;
+  --line-soft: #2a2a2f;
+
+  --ink: #f2efe8;
+  --ink-soft: #d4d1c9;
+  --ink-muted: #9b9aa2;
+  --ink-faint: #75747c;
+
+  --lane: #ffc800;
+  --lane-deep: #e0ae00;
+  --paper: #f2efe8;
+  --paper-ink: #17171a;
+  --paper-muted: #6b6a62;
+
+  --plate: #2f6bff;
+  --plate-soft: #6ca6ff;
+  --go: #43d17a;
+  --warn: #ff8a3d;
+  --stop: #ff5a4f;
+
+  --font-display: var(--font-barlow-condensed), 'Arial Narrow', sans-serif;
+  --font-body: var(--font-barlow), system-ui, -apple-system, sans-serif;
+
+  --radius-ticket: 14px;
+  --radius-control: 10px;
+  --radius-chip: 6px;
 }
 
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  background-color: var(--asphalt);
+  color-scheme: dark;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  margin: 0;
+  min-height: 100dvh;
+  background-color: var(--asphalt);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
 }
 
-main {
-  width: min(100%, 48rem);
-  margin-inline: auto;
-  padding: clamp(2rem, 8vw, 6rem) 1.5rem;
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
 }
 
-h1 {
-  font-size: clamp(2rem, 6vw, 3rem);
-  line-height: 1.2;
-  overflow-wrap: anywhere;
+button {
+  -webkit-tap-highlight-color: transparent;
 }
 
-p {
-  max-width: 65ch;
+:focus-visible {
+  outline: 2px solid var(--lane);
+  outline-offset: 2px;
 }
 
-.eyebrow {
-  color: #0369a1;
-  font-weight: 700;
+::selection {
+  background: var(--lane);
+  color: var(--paper-ink);
 }
 
-code {
-  font-size: 1em;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }

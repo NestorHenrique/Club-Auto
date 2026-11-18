@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024" role="img" aria-label="Club Auto">
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0" stop-color="#ffdc2e"/>
+      <stop offset="0.55" stop-color="#ffc800"/>
+      <stop offset="1" stop-color="#e9a800"/>
+    </linearGradient>
+    <linearGradient id="ticket" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3a3a40"/>
+      <stop offset="1" stop-color="#1b1b1f"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd84a"/>
+      <stop offset="1" stop-color="#f2b200"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="22" stdDeviation="20" flood-color="#5a3c00" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <!-- Placa amarela -->
+  <rect x="0" y="0" width="1024" height="1024" rx="228" fill="url(#tile)"/>
+  <rect x="38" y="38" width="948" height="948" rx="194" fill="none" stroke="#fff3b0" stroke-opacity="0.7" stroke-width="5"/>
+
+  <!-- Ticket inclinado -->
+  <g transform="translate(512 528) rotate(-12)">
+    <path filter="url(#shadow)" fill="url(#ticket)" d="M -310 -200 H 310 A 40 40 0 0 1 350 -160 V -48 A 48 48 0 0 0 350 48 V 160 A 40 40 0 0 1 310 200 H -310 A 40 40 0 0 1 -350 160 V 48 A 48 48 0 0 0 -350 -48 V -160 A 40 40 0 0 1 -310 -200 Z"/>
+    <path fill="none" stroke="#e8b400" stroke-width="7" d="M -300 -174 H 300 A 24 24 0 0 1 324 -150 V -69.3 A 74 74 0 0 0 324 69.3 V 150 A 24 24 0 0 1 300 174 H -300 A 24 24 0 0 1 -324 150 V 69.3 A 74 74 0 0 0 -324 -69.3 V -150 A 24 24 0 0 1 -300 -174 Z"/>
+
+    <!-- % feito de engrenagens -->
+    <g fill="url(#gold)">
+      <g transform="translate(-222 -58)">
+        <circle r="46" fill="none" stroke="url(#gold)" stroke-width="14" stroke-dasharray="22 14.13"/>
+        <circle r="40"/>
+        <circle r="16" fill="#26262a"/>
+      </g>
+      <polygon points="-199,128 -159,128 -59,-128 -99,-128"/>
+      <g transform="translate(-48 72)">
+        <circle r="46" fill="none" stroke="url(#gold)" stroke-width="14" stroke-dasharray="22 14.13"/>
+        <circle r="40"/>
+        <circle r="16" fill="#26262a"/>
+      </g>
+    </g>
+
+    <!-- Carro com linhas de velocidade -->
+    <g fill="none" stroke="#ffc800" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M 40 -150 H 92"/>
+      <path d="M 56 -136 H 100"/>
+      <path d="M 96 -118 H 128 M 154 -118 H 222 M 248 -118 H 266 C 276 -118 278 -128 268 -132 L 238 -142 C 222 -160 196 -166 168 -160 C 146 -155 130 -140 112 -130 C 104 -126 98 -124 96 -118"/>
+      <path d="M 128 -116 A 13 13 0 0 1 154 -116"/>
+      <path d="M 222 -116 A 13 13 0 0 1 248 -116"/>
+    </g>
+
+    <!-- CLUB / AUTO desenhados em traço, sem depender de fonte -->
+    <g fill="none" stroke="url(#gold)" stroke-width="20" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M 61 -78 A 21 40 0 1 0 61 -22"/>
+      <path d="M 93 -90 V -10 H 135"/>
+      <path d="M 161 -90 V -31 A 21 21 0 0 0 203 -31 V -90"/>
+      <path d="M 229 -10 V -90 H 249 A 19 20 0 0 1 249 -50 H 229 M 229 -50 H 250 A 21 20 0 0 1 250 -10 H 229"/>
+      <path d="M 25 112 L 46 32 L 67 112 M 35 84 H 57"/>
+      <path d="M 93 32 V 91 A 21 21 0 0 0 135 91 V 32"/>
+      <path d="M 161 32 H 203 M 182 32 V 112"/>
+      <ellipse cx="250" cy="72" rx="21" ry="40"/>
+    </g>
+  </g>
+</svg>

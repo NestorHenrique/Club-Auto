@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Relatório do mês</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&amp;family=Barlow+Condensed:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#ffc800}a:hover{color:#e0ae00}
+.d{font-family:'Barlow Condensed',sans-serif}
+.bar{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;height:100%}
+.bf{width:100%;border-radius:4px 4px 0 0;background:#ffc800}
+.bl{font-size:13px;color:#9b9aa2}
+.top{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #2a2a2f;font-size:16px}
+.tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:56px;color:#9b9aa2;text-decoration:none;font-family:'Barlow',sans-serif;font-size:13px;font-weight:600}
+.tab:hover{color:#f2efe8}
+.tabOn{color:#ffc800}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; overflow: hidden; background: #131315; color: #f2efe8; font-family: 'Barlow', sans-serif">
+  <div style="padding: 24px 16px; display: flex; flex-direction: column; gap: 18px">
+    <div style="display: flex; align-items: center; justify-content: space-between">
+      <h1 class="d" style="margin: 0; font-size: 38px; font-weight: 800; line-height: 1">Relatório</h1>
+      <label for="mes" style="position: absolute; width: 1px; height: 1px; overflow: hidden">Mês</label>
+      <select id="mes" style="min-height: 44px; padding: 0 12px; border: 1px solid #34343a; border-radius: 10px; background: #1c1c1f; color: #f2efe8; font-family: 'Barlow', sans-serif; font-size: 15px; font-weight: 600"><option>Novembro</option><option>Outubro</option></select>
+    </div>
+
+    <div style="padding-bottom: 18px; border-bottom: 1px dashed #34343a">
+      <p class="d" style="margin: 0; font-size: 60px; font-weight: 800; line-height: 0.95; color: #ffc800">R$ 3.420,00</p>
+      <p style="margin: 6px 0 0; font-size: 16px; color: #9b9aa2">em serviços de motoristas que vieram pelo clube</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+      <div><p class="d" style="margin: 0; font-size: 40px; font-weight: 700; line-height: 1">52</p><p style="margin: 4px 0 0; font-size: 15px; color: #9b9aa2">cupons gerados</p></div>
+      <div><p class="d" style="margin: 0; font-size: 40px; font-weight: 700; line-height: 1">38 <span style="font-size: 22px; color: #43d17a">73%</span></p><p style="margin: 4px 0 0; font-size: 15px; color: #9b9aa2">viraram atendimento</p></div>
+    </div>
+
+    <section aria-label="Atendimentos por semana">
+      <h2 class="d" style="margin: 0 0 10px; font-size: 24px; font-weight: 700">Atendimentos por semana</h2>
+      <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; height: 130px; padding-bottom: 2px; border-bottom: 1px solid #34343a">
+        <div class="bar"><span class="d" style="font-size: 18px; font-weight: 700">7</span><span class="bf" style="height: 40%"></span></div>
+        <div class="bar"><span class="d" style="font-size: 18px; font-weight: 700">11</span><span class="bf" style="height: 62%"></span></div>
+        <div class="bar"><span class="d" style="font-size: 18px; font-weight: 700">14</span><span class="bf" style="height: 80%"></span></div>
+        <div class="bar"><span class="d" style="font-size: 18px; font-weight: 700">6</span><span class="bf" style="height: 34%; background: #6b5a1a"></span></div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 6px; text-align: center">
+        <span class="bl">1ª sem.</span><span class="bl">2ª sem.</span><span class="bl">3ª sem.</span><span class="bl">Esta</span>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="d" style="margin: 0 0 4px; font-size: 24px; font-weight: 700">Ofertas que mais trazem clientes</h2>
+      <div class="top"><span style="flex: 1">Alinhamento 3D + Balanceamento</span><span class="d" style="font-size: 22px; font-weight: 700">17</span></div>
+      <div class="top"><span style="flex: 1">Troca de óleo sintético</span><span class="d" style="font-size: 22px; font-weight: 700">12</span></div>
+      <div class="top"><span style="flex: 1">Pastilhas de freio dianteiras</span><span class="d" style="font-size: 22px; font-weight: 700">9</span></div>
+    </section>
+  </div>
+
+  <nav aria-label="Navegação do auto center" style="position: absolute; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 8px 8px 20px; background: #1c1c1f; border-top: 1px solid #2a2a2f">
+    <a href="Painel.dc.html" class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path><path d="M7 12h10"></path></svg>Balcão</a>
+    <a href="NovaOferta.dc.html" class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.6 2.6A2 2 0 0 0 11.2 2H4a2 2 0 0 0-2 2v7.2a2 2 0 0 0 .6 1.4l8.7 8.7a2.4 2.4 0 0 0 3.4 0l6.6-6.6a2.4 2.4 0 0 0 0-3.4z"></path><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"></circle></svg>Ofertas</a>
+    <a href="Relatorio.dc.html" class="tab tabOn" aria-current="page"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v16a2 2 0 0 0 2 2h16"></path><path d="M18 17V9"></path><path d="M13 17V5"></path><path d="M8 17v-3"></path></svg>Relatório</a>
+    <a href="CadastroAutoCenter.dc.html" class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"></path><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"></path><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"></path><path d="M10 6h4"></path><path d="M10 10h4"></path><path d="M10 14h4"></path><path d="M10 18h4"></path></svg>Oficina</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

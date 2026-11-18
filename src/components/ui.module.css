@@ -1,0 +1,284 @@
+/* Peças compartilhadas: painéis, formulários, botões e cartões de avaliação. */
+.panel {
+  padding: 22px 20px;
+  background: var(--graphite);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-ticket);
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0 6px;
+  font-family: var(--font-display);
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.lead {
+  margin-bottom: 18px;
+  max-width: 46ch;
+  font-size: 16px;
+  color: var(--ink-muted);
+}
+
+.subtitle {
+  margin: 22px 0 10px;
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.muted {
+  font-size: 15px;
+  color: var(--ink-muted);
+}
+
+/* ---------- Formulário ---------- */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.input {
+  width: 100%;
+  min-height: 50px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  background: var(--asphalt-deep);
+  color: var(--ink);
+  font-size: 16px;
+}
+
+textarea.input {
+  padding: 12px 14px;
+  resize: vertical;
+  line-height: 1.4;
+}
+
+.input::placeholder {
+  color: var(--ink-faint);
+}
+
+.input:focus {
+  border-color: var(--lane);
+  outline: none;
+}
+
+.inputPrice {
+  border-color: var(--lane);
+  color: var(--lane);
+  font-weight: 600;
+}
+
+/* ---------- Botões ---------- */
+.btn,
+.btnGhost,
+.btnSmall {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: transform 0.12s ease, border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.btn {
+  min-height: 52px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: var(--lane);
+  color: var(--paper-ink);
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.btn:hover {
+  background: var(--lane-deep);
+}
+
+.btnGhost {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.btnGhost:hover {
+  border-color: var(--lane);
+  color: var(--lane);
+}
+
+.btnSmall {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: var(--radius-chip);
+  background: var(--lane);
+  color: var(--paper-ink);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.btn:active,
+.btnGhost:active,
+.btnSmall:active {
+  transform: scale(0.98);
+}
+
+/* ---------- Avatar / logo ---------- */
+.avatarBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 96px;
+  height: 96px;
+  overflow: hidden;
+  border: 2px solid var(--lane);
+  border-radius: 50%;
+  background: var(--graphite-raised);
+  color: var(--ink-muted);
+}
+
+.logo {
+  composes: avatar;
+  width: 104px;
+  height: 104px;
+  border-radius: 14px;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.upload {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.upload:hover,
+.upload:focus-within {
+  border-color: var(--lane);
+  color: var(--lane);
+}
+
+.upload input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+/* ---------- Avaliações ---------- */
+.reviews {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  list-style: none;
+}
+
+.review {
+  padding: 14px 16px;
+  background: var(--asphalt-deep);
+  border-left: 4px solid var(--warn);
+  border-radius: 4px var(--radius-control) var(--radius-control) 4px;
+}
+
+.reviewHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.reviewAuthor {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--warn);
+}
+
+.reviewService {
+  font-size: 15px;
+  color: var(--ink-muted);
+}
+
+.reviewComment {
+  margin-top: 8px;
+  font-size: 16px;
+  color: var(--ink-soft);
+}
+
+.empty {
+  padding: 28px 20px;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-ticket);
+  text-align: center;
+  color: var(--ink-muted);
+}
+
+.emptyTitle {
+  margin-bottom: 4px;
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ink);
+}
