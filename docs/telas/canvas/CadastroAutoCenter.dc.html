@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Cadastro do auto center</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&amp;family=Barlow+Condensed:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#ffc800}a:hover{color:#e0ae00}
+.lbl{font-size:15px;font-weight:600;color:#d4d1c9}
+.inp{width:100%;min-height:50px;box-sizing:border-box;padding:0 14px;border:1px solid #34343a;border-radius:10px;background:#0d0d0f;color:#f2efe8;font-family:'Barlow',sans-serif;font-size:16px}
+.chip{display:inline-flex;align-items:center;min-height:40px;padding:0 12px;border:1px solid #34343a;border-radius:6px;background:#1c1c1f;color:#f2efe8;font-family:'Barlow',sans-serif;font-size:15px;font-weight:600}
+.chipOn{background:#ffc800;border-color:#ffc800;color:#17171a}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 20px 20px 28px; background: #131315; color: #f2efe8; font-family: 'Barlow', sans-serif; display: flex; flex-direction: column; gap: 18px">
+  <div style="display: flex; align-items: center; gap: 14px">
+    <a href="Entrada.dc.html" aria-label="Voltar" style="display: flex; width: 46px; height: 46px; flex-shrink: 0; border: 1px solid #34343a; border-radius: 10px; align-items: center; justify-content: center; color: #f2efe8">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>
+    </a>
+    <div style="flex: 1; display: flex; flex-direction: column; gap: 6px">
+      <span style="font-size: 14px; color: #9b9aa2">Passo 1 de 3</span>
+      <div style="display: flex; gap: 6px"><span style="flex: 1; height: 5px; border-radius: 2px; background: #ffc800"></span><span style="flex: 1; height: 5px; border-radius: 2px; background: #34343a"></span><span style="flex: 1; height: 5px; border-radius: 2px; background: #34343a"></span></div>
+    </div>
+  </div>
+
+  <div>
+    <h1 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-size: 42px; font-weight: 800; line-height: 1">Sua oficina</h1>
+    <p style="margin: 6px 0 0; font-size: 16px; color: #9b9aa2">Digite o CNPJ e preenchemos o resto.</p>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 6px">
+    <label class="lbl" for="cnpj">CNPJ</label>
+    <input id="cnpj" class="inp" value="12.345.678/0001-99" inputmode="numeric" style="border-color: #43d17a">
+  </div>
+
+  <div style="display: flex; gap: 12px; padding: 14px; border-left: 4px solid #43d17a; border-radius: 4px 10px 10px 4px; background: #1c1c1f">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#43d17a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 2px"><path d="M20 6 9 17l-5-5"></path></svg>
+    <div style="display: flex; flex-direction: column; gap: 2px">
+      <span style="font-size: 16px; font-weight: 600">Auto Center Parnaíba Ltda.</span>
+      <span style="font-size: 15px; color: #9b9aa2">Av. São Sebastião, 1500, Parnaíba/PI</span>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px">
+    <div style="display: flex; flex-direction: column; gap: 6px"><label class="lbl" for="fantasia">Nome na vitrine</label><input id="fantasia" class="inp" value="Auto Center Parnaíba"></div>
+    <div style="display: flex; flex-direction: column; gap: 6px"><label class="lbl" for="zap">WhatsApp</label><input id="zap" class="inp" type="tel" value="(86) 3322-1100"></div>
+  </div>
+
+  <fieldset style="margin: 0; padding: 0; border: 0">
+    <legend class="lbl" style="padding: 0; margin-bottom: 8px">Serviços que vocês fazem</legend>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px">
+      <button type="button" class="chip chipOn" aria-pressed="true">Alinhamento</button>
+      <button type="button" class="chip chipOn" aria-pressed="true">Freios</button>
+      <button type="button" class="chip chipOn" aria-pressed="true">Óleo</button>
+      <button type="button" class="chip" aria-pressed="false">Pneus</button>
+      <button type="button" class="chip" aria-pressed="false">Lavagem</button>
+      <button type="button" class="chip" aria-pressed="false">Elétrica</button>
+    </div>
+  </fieldset>
+
+  <p style="margin: 0; font-size: 15px; line-height: 1.4; color: #9b9aa2">Depois do cadastro, a equipe do Clube Auto confere os dados antes de suas ofertas aparecerem para os motoristas.</p>
+
+  <button type="button" style="margin-top: auto; min-height: 54px; border: 0; border-radius: 10px; background: #ffc800; color: #17171a; font-family: 'Barlow Condensed', sans-serif; font-size: 23px; font-weight: 700; cursor: pointer">Continuar</button>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

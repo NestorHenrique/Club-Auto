@@ -1,0 +1,74 @@
+{
+  "v": 3,
+  "createdOnFiles": { "v": 1, "at": "2026-11-18T12:00:00Z" },
+  "title": "Clube Auto — telas do app",
+  "launch": { "view": "canvas", "page": "marca" },
+  "pages": [
+    { "id": "marca", "name": "Marca" },
+    { "id": "acesso", "name": "Acesso e cadastro" },
+    { "id": "motorista", "name": "Motorista" },
+    { "id": "autocenter", "name": "Auto center" }
+  ],
+  "boards": {
+    "Main.dc.html": { "x": 0, "y": 0, "w": 1280, "h": 800, "title": "Ícone do app", "page": "marca" },
+    "Splash.dc.html": { "x": 1360, "y": 0, "w": 390, "h": 844, "title": "Abertura", "page": "marca" },
+
+    "Entrada.dc.html": { "x": 0, "y": 0, "w": 390, "h": 844, "title": "Boas-vindas", "page": "acesso" },
+    "Login.dc.html": { "x": 470, "y": 0, "w": 390, "h": 844, "title": "Entrar", "page": "acesso" },
+    "CadastroMotorista.dc.html": { "x": 940, "y": 0, "w": 390, "h": 844, "title": "Cadastro do motorista", "page": "acesso" },
+    "CadastroAutoCenter.dc.html": { "x": 1410, "y": 0, "w": 390, "h": 844, "title": "Cadastro do auto center", "page": "acesso" },
+
+    "Ofertas.dc.html": { "x": 0, "y": 0, "w": 390, "h": 844, "title": "Ofertas (início)", "page": "motorista" },
+    "Oferta.dc.html": { "x": 470, "y": 0, "w": 390, "h": 844, "title": "Detalhe da oferta", "page": "motorista" },
+    "Cupom.dc.html": { "x": 940, "y": 0, "w": 390, "h": 844, "title": "Cupom gerado", "page": "motorista" },
+    "MeusCupons.dc.html": { "x": 1410, "y": 0, "w": 390, "h": 844, "title": "Meus cupons", "page": "motorista" },
+    "Mapa.dc.html": { "x": 1880, "y": 0, "w": 390, "h": 844, "title": "Mapa de oficinas", "page": "motorista" },
+    "Avaliar.dc.html": { "x": 0, "y": 1524, "w": 390, "h": 844, "title": "Avaliar serviço", "page": "motorista" },
+    "Perfil.dc.html": { "x": 470, "y": 1524, "w": 390, "h": 844, "title": "Perfil e veículo", "page": "motorista" },
+    "Indique.dc.html": { "x": 940, "y": 1524, "w": 390, "h": 844, "title": "Indique e ganhe", "page": "motorista" },
+    "Avisos.dc.html": { "x": 1410, "y": 1524, "w": 390, "h": 844, "title": "Avisos", "page": "motorista" },
+    "Estados.dc.html": { "x": 1880, "y": 1524, "w": 390, "h": 844, "title": "Sem internet e erros", "page": "motorista" },
+
+    "Painel.dc.html": { "x": 0, "y": 0, "w": 390, "h": 844, "title": "Painel do auto center", "page": "autocenter" },
+    "Validado.dc.html": { "x": 470, "y": 0, "w": 390, "h": 844, "title": "Cupom validado", "page": "autocenter" },
+    "NovaOferta.dc.html": { "x": 940, "y": 0, "w": 390, "h": 844, "title": "Nova oferta", "page": "autocenter" },
+    "Relatorio.dc.html": { "x": 1410, "y": 0, "w": 390, "h": 844, "title": "Relatório do mês", "page": "autocenter" }
+  },
+  "order": [
+    "Main.dc.html", "Splash.dc.html",
+    "Entrada.dc.html", "Login.dc.html", "CadastroMotorista.dc.html", "CadastroAutoCenter.dc.html",
+    "Ofertas.dc.html", "Oferta.dc.html", "Cupom.dc.html", "MeusCupons.dc.html", "Mapa.dc.html",
+    "Avaliar.dc.html", "Perfil.dc.html", "Indique.dc.html", "Avisos.dc.html", "Estados.dc.html",
+    "Painel.dc.html", "Validado.dc.html", "NovaOferta.dc.html", "Relatorio.dc.html"
+  ],
+  "notes": {
+    "t_marca": { "x": 0, "y": -300, "text": "Marca: ícone e abertura", "kind": "title1", "maxW": 1750, "page": "marca" },
+    "n_icone": { "x": 0, "y": 840, "w": 620, "size": "m", "fill": "orange", "page": "marca", "text": "Ícone. Recomendo a opção A: o ticket com picote é o mesmo desenho das ofertas dentro do app, e o amarelo se destaca entre os ícones azuis e pretos de Uber, 99 e Waze. A opção B funciona se vocês quiserem algo mais sóbrio. Evitei usar a placa Mercosul no ícone para não parecer documento oficial." },
+    "n_splash": { "x": 1360, "y": 884, "w": 390, "size": "s", "fill": "gray", "page": "marca", "text": "Abertura. Aparece só enquanto o app carrega a sessão (menos de 1 s). Se já houver login salvo, vai direto para Ofertas ou para o Painel do auto center." },
+
+    "t_acesso": { "x": 0, "y": -300, "text": "Acesso e cadastro", "kind": "title1", "maxW": 1800, "page": "acesso" },
+    "n_entrada": { "x": 0, "y": 884, "w": 390, "size": "s", "fill": "gray", "page": "acesso", "text": "Boas-vindas. Já existe hoje como escolha provisória. Com login, vira a primeira tela de quem nunca entrou: escolher o tipo de conta leva ao cadastro certo." },
+    "n_login": { "x": 470, "y": 884, "w": 390, "size": "s", "fill": "gray", "page": "acesso", "text": "Entrar. Telefone com código por SMS ou WhatsApp é o mais simples para motorista (sem senha para esquecer). E-mail e senha como alternativa. O tipo de conta vem do backend e decide a rota." },
+    "n_cadm": { "x": 940, "y": 884, "w": 390, "size": "s", "fill": "gray", "page": "acesso", "text": "Cadastro do motorista em 2 passos: dados pessoais e veículo. A placa valida o formato Mercosul e o antigo. Aceite de termos e privacidade (LGPD) obrigatório antes de criar a conta." },
+    "n_cada": { "x": 1410, "y": 884, "w": 390, "size": "s", "fill": "gray", "page": "acesso", "text": "Cadastro do auto center: CNPJ (consulta automática preenche nome e endereço), endereço usado no GPS, horário e serviços. Conta fica em análise até a equipe aprovar, para evitar oficina falsa." },
+
+    "t_motorista": { "x": 0, "y": -300, "text": "Motorista", "kind": "title1", "maxW": 2270, "page": "motorista" },
+    "n_ofertas": { "x": 0, "y": 884, "w": 390, "size": "s", "fill": "gray", "page": "motorista", "text": "Ofertas. É a tela atual, com uma mudança sugerida: barra de abas embaixo (Ofertas, Mapa, Cupons, Perfil) no lugar do menu lateral. No celular o polegar alcança melhor e o motorista usa com uma mão." },
+    "n_oferta": { "x": 470, "y": 884, "w": 390, "size": "s", "fill": "orange", "page": "motorista", "text": "Detalhe da oferta (nova). Hoje o botão gera o cupom direto do card. Aqui o motorista vê o que está incluído, regras, distância, nota da oficina e só então gera. Evita cupom gerado sem querer." },
+    "n_cupom": { "x": 940, "y": 884, "w": 390, "size": "s", "fill": "gray", "page": "motorista", "text": "Cupom gerado. Já existe. Sugestão: adicionar QR code para a oficina escanear, além do código digitado. O prazo e o código devem vir do backend." },
+    "n_meus": { "x": 1410, "y": 884, "w": 390, "size": "s", "fill": "gray", "page": "motorista", "text": "Meus cupons. Já existe. Tocar num cupom válido reabre o ticket completo com QR e rota. Cupom vencendo em menos de 2 h ganha destaque laranja." },
+    "n_mapa": { "x": 1880, "y": 884, "w": 390, "size": "s", "fill": "orange", "page": "motorista", "text": "Mapa (novo). Oficinas parceiras perto do motorista com a melhor oferta de cada uma. Precisa da permissão de localização e das coordenadas da oficina no backend." },
+    "n_avaliar": { "x": 0, "y": 2408, "w": 390, "size": "s", "fill": "gray", "page": "motorista", "text": "Avaliar serviço. Já existe como janela. Sugestão: etiquetas rápidas (Rápido, Preço combinado, Atendimento bom) para quem não quer escrever." },
+    "n_perfil": { "x": 470, "y": 2408, "w": 390, "size": "s", "fill": "gray", "page": "motorista", "text": "Perfil. Já existe. Sugestão: mostrar a nota do motorista e permitir mais de um veículo (quem troca de carro alugado)." },
+    "n_indique": { "x": 940, "y": 2408, "w": 390, "size": "s", "fill": "gray", "page": "motorista", "text": "Indique e ganhe. Já existe. Falta definir a regra do bônus com o backend; a tela mostra quantos amigos entraram e o que falta para o próximo prêmio." },
+    "n_avisos": { "x": 1410, "y": 2408, "w": 390, "size": "s", "fill": "orange", "page": "motorista", "text": "Avisos (nova). Cupom vencendo, nova oferta relâmpago perto, avaliação pendente. No app web vira notificação do navegador; no Flutter, push." },
+    "n_estados": { "x": 1880, "y": 2408, "w": 390, "size": "s", "fill": "orange", "page": "motorista", "text": "Sem internet e erro (nova). O motorista roda por áreas sem sinal: o cupom já gerado precisa abrir offline. Erros dizem o que fazer, nunca só 'algo deu errado'." },
+
+    "t_autocenter": { "x": 0, "y": -300, "text": "Auto center", "kind": "title1", "maxW": 1800, "page": "autocenter" },
+    "n_painel": { "x": 0, "y": 884, "w": 390, "size": "s", "fill": "gray", "page": "autocenter", "text": "Painel. Já existe. Sugestão: botão de escanear QR do cupom com a câmera, além de digitar. O número de baixas no mês precisa vir de dados reais (hoje é fixo)." },
+    "n_validado": { "x": 470, "y": 884, "w": 390, "size": "s", "fill": "orange", "page": "autocenter", "text": "Cupom validado (nova). Hoje aparece só uma linha de texto. Aqui o balconista confere motorista, placa, serviço e preço combinado antes de atender. Evita cobrar o valor errado." },
+    "n_nova": { "x": 940, "y": 884, "w": 390, "size": "s", "fill": "gray", "page": "autocenter", "text": "Nova oferta. Já existe. Sugestão: prévia ao vivo de como o ticket vai aparecer para o motorista, com o desconto calculado sozinho." },
+    "n_rel": { "x": 1410, "y": 884, "w": 390, "size": "s", "fill": "orange", "page": "autocenter", "text": "Relatório (novo). Cupons gerados x usados, receita trazida pelo clube e ofertas que mais vendem. É o argumento para a oficina continuar pagando o plano." }
+  },
+  "designSystems": []
+}

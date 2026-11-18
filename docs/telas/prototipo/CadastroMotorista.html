@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cadastro do motorista</title>
+</head>
+<body>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&amp;family=Barlow+Condensed:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;min-height:100vh;display:flex;justify-content:center;align-items:flex-start;background:#0b0b0c}
+a{color:#ffc800}a:hover{color:#e0ae00}
+.lbl{font-size:15px;font-weight:600;color:#d4d1c9}
+.inp{width:100%;min-height:50px;box-sizing:border-box;padding:0 14px;border:1px solid #34343a;border-radius:10px;background:#0d0d0f;color:#f2efe8;font-family:'Barlow',sans-serif;font-size:16px}
+.chip{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 14px;border:1px solid #34343a;border-radius:6px;background:#1c1c1f;color:#f2efe8;font-family:'Barlow',sans-serif;font-size:15px;font-weight:600}
+.chipOn{background:#ffc800;border-color:#ffc800;color:#17171a}
+</style>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 20px 20px 28px; background: #131315; color: #f2efe8; font-family: 'Barlow', sans-serif; display: flex; flex-direction: column; gap: 20px">
+  <div style="display: flex; align-items: center; gap: 14px">
+    <a href="Entrada.html" aria-label="Voltar" style="display: flex; width: 46px; height: 46px; flex-shrink: 0; border: 1px solid #34343a; border-radius: 10px; align-items: center; justify-content: center; color: #f2efe8">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>
+    </a>
+    <div style="flex: 1; display: flex; flex-direction: column; gap: 6px">
+      <span style="font-size: 14px; color: #9b9aa2">Passo 2 de 2</span>
+      <div style="display: flex; gap: 6px"><span style="flex: 1; height: 5px; border-radius: 2px; background: #ffc800"></span><span style="flex: 1; height: 5px; border-radius: 2px; background: #ffc800"></span></div>
+    </div>
+  </div>
+
+  <div>
+    <h1 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-size: 42px; font-weight: 800; line-height: 1">Seu veículo</h1>
+    <p style="margin: 6px 0 0; font-size: 16px; color: #9b9aa2">A oficina confere a placa na hora de usar o cupom.</p>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <label class="lbl" for="placa">Placa</label>
+    <div style="display: flex; flex-direction: column; width: 210px; overflow: hidden; border: 2px solid #ffffff; border-radius: 8px; background: #f7f7f4">
+      <span style="padding: 3px 0; background: #2f6bff; color: #fff; text-align: center; font-size: 11px; font-weight: 600; letter-spacing: 0.18em">BRASIL</span>
+      <input id="placa" value="ABC1D23" style="border: 0; background: transparent; padding: 6px 0 4px; text-align: center; color: #17171a; font-family: 'Barlow Condensed', sans-serif; font-size: 40px; font-weight: 700; letter-spacing: 0.08em">
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 12px">
+    <div style="display: flex; flex-direction: column; gap: 6px"><label class="lbl" for="modelo">Modelo</label><input id="modelo" class="inp" value="VW Voyage 1.6"></div>
+    <div style="display: flex; flex-direction: column; gap: 6px"><label class="lbl" for="ano">Ano</label><input id="ano" class="inp" value="2019" inputmode="numeric"></div>
+  </div>
+
+  <fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 8px">
+    <legend class="lbl" style="padding: 0; margin-bottom: 8px">Por quais apps você roda?</legend>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px">
+      <button type="button" class="chip chipOn" aria-pressed="true">Uber</button>
+      <button type="button" class="chip chipOn" aria-pressed="true">99</button>
+      <button type="button" class="chip" aria-pressed="false">inDrive</button>
+      <button type="button" class="chip" aria-pressed="false">Entregas</button>
+    </div>
+  </fieldset>
+
+  <label style="display: flex; align-items: flex-start; gap: 12px; font-size: 15px; line-height: 1.4; color: #d4d1c9">
+    <input type="checkbox" checked style="width: 22px; height: 22px; margin: 0; flex-shrink: 0; accent-color: #ffc800">
+    <span>Li e aceito os <a href="#">termos de uso</a> e a <a href="#">política de privacidade</a>.</span>
+  </label>
+
+  <a href="Ofertas.html" style="margin-top: auto; display: flex; align-items: center; justify-content: center; min-height: 54px; border-radius: 10px; background: #ffc800; color: #17171a; text-decoration: none; font-family: 'Barlow Condensed', sans-serif; font-size: 23px; font-weight: 700">Criar conta</a>
+</div>
+</body>
+</html>

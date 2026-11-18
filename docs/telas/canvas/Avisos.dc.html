@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Avisos</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&amp;family=Barlow+Condensed:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#ffc800}a:hover{color:#e0ae00}
+.d{font-family:'Barlow Condensed',sans-serif}
+.grp{margin:8px 0 4px;font-size:14px;font-weight:600;color:#9b9aa2}
+.it{position:relative;display:flex;gap:14px;padding:14px 4px;border-bottom:1px solid #2a2a2f;color:#f2efe8;text-decoration:none}
+.ico{display:flex;width:42px;height:42px;flex-shrink:0;border-radius:10px;align-items:center;justify-content:center}
+.t{display:block;font-size:16px;font-weight:600;line-height:1.3}
+.s{display:block;margin-top:2px;font-size:15px;line-height:1.35;color:#9b9aa2}
+.when{display:block;margin-top:4px;font-size:13px;color:#75747c}
+.dot{position:absolute;right:4px;top:20px;width:9px;height:9px;border-radius:50%;background:#ff8a3d}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 20px 16px; background: #131315; color: #f2efe8; font-family: 'Barlow', sans-serif; display: flex; flex-direction: column; gap: 10px">
+  <div style="display: flex; align-items: center; justify-content: space-between">
+    <a href="Ofertas.dc.html" aria-label="Voltar às ofertas" style="display: flex; width: 46px; height: 46px; border: 1px solid #34343a; border-radius: 10px; align-items: center; justify-content: center; color: #f2efe8">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>
+    </a>
+    <button type="button" style="min-height: 44px; padding: 0 4px; border: 0; background: transparent; color: #ffc800; font-family: 'Barlow', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer">Marcar como lidos</button>
+  </div>
+
+  <h1 class="d" style="margin: 0; font-size: 40px; font-weight: 800; line-height: 1">Avisos</h1>
+
+  <div>
+    <p class="grp">Hoje</p>
+    <a href="MeusCupons.dc.html" class="it">
+      <span class="ico" style="background: rgba(255,138,61,.15); color: #ff8a3d"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg></span>
+      <span><span class="t">Seu cupom de troca de óleo vence em 1 h 20</span><span class="s">Auto Center Parnaíba fica a 1,2 km. Abra o cupom para ver a rota.</span><span class="when">há 10 min</span></span>
+      <span class="dot" aria-label="Não lido"></span>
+    </a>
+    <a href="Oferta.dc.html" class="it">
+      <span class="ico" style="background: rgba(255,200,0,.15); color: #ffc800"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"></path></svg></span>
+      <span><span class="t">Oferta relâmpago perto de você</span><span class="s">Alinhamento 3D por R$ 90,00, só até 23:59. Restam 4 cupons.</span><span class="when">há 2 h</span></span>
+      <span class="dot" aria-label="Não lido"></span>
+    </a>
+  </div>
+
+  <div>
+    <p class="grp">Esta semana</p>
+    <a href="Avaliar.dc.html" class="it">
+      <span class="ico" style="background: #26262a; color: #ff8a3d"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"></path></svg></span>
+      <span><span class="t">Como foi o alinhamento?</span><span class="s">Sua avaliação ajuda outros motoristas a escolher a oficina.</span><span class="when">segunda-feira</span></span>
+    </a>
+    <a href="MeusCupons.dc.html" class="it">
+      <span class="ico" style="background: rgba(67,209,122,.14); color: #43d17a"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+      <span><span class="t">Cupom usado. Você economizou R$ 60,00</span><span class="s">A oficina deu baixa no cupom CLUB-PAR-4402-MX1B.</span><span class="when">segunda-feira</span></span>
+    </a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
